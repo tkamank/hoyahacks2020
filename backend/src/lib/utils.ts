@@ -140,6 +140,14 @@ export const Database = {
           }
         }
       );
+      connection.query(
+        `CREATE TABLE locations (id INT(6) AUTO_INCREMENT PRIMARY KEY, owner VARCHAR(30) NOT NULL, latitude VARCHAR(20) NOT NULL, longitude VARCHAR(20) NOT NULL, formatted_address VARCHAR(255) NOT NULL);`,
+        (err: mysql.MysqlError, result: any) => {
+          if (err) {
+            console.warn(err);
+          }
+        }
+      );
       connection.end();
     } catch (err) {
       console.warn(err);
