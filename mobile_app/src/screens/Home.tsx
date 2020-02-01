@@ -196,7 +196,7 @@ export default class SplashScreen extends Component<Props, State> {
     };
 
     render() {
-        const { region } = this.state;
+        const { region, riderStatus } = this.state;
 
         return (
             <>
@@ -211,21 +211,22 @@ export default class SplashScreen extends Component<Props, State> {
                         longitudeDelta: 0.0121,
                     }}
                     onLongPress={this._handleMapLongPressed}
+                    onRegionChangeComplete={region => this.setState({ region })}
                 />
-                <RiderMapActionTab locations={RECENT_LOCATIONS} />
+                {riderStatus === "rider" && <RiderMapActionTab locations={RECENT_LOCATIONS} />}
                 <View style={{ flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center', borderColor: '#D95F76', borderStyle: 'solid', borderTopWidth: 2 }}>
                     <View style={{ flex: 1 }}>
                         <Button
                             title="Ride"
                             onPress={this._verifyUserExists}
-                            color="#f3f3f3"
+                            color={riderStatus === "rider" ? "#f3f3f3" : "#333"}
                         />
                     </View>
                     <View style={{ flex: 1 }}>
                         <Button
                             title="Drive"
                             onPress={this._verifyIsDriver}
-                            color="#f3f3f3"
+                            color={riderStatus === "driver" ? "#f3f3f3" : "#333"}
                         />
                     </View>
                 </View>
