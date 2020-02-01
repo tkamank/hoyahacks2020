@@ -58,6 +58,25 @@ export const Database = {
       });
     },
   },
+  Location: {
+    create: async (owner: string, latitude: string, longitude: string, formattedAddress: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `INSERT INTO locations (owner,latitude,longitude,formatted_address) VALUES ("${owner}", "${latitude}","${longitude}","${formattedAddress}");`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          }
+        );
+      });
+    },
+  },
   User: {
     create: async (id: string, email: string): Promise<void> => {
       return new Promise((resolve, reject) => {

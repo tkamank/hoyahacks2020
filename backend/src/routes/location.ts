@@ -1,7 +1,9 @@
 import { Router, Request, Response } from "express";
+import { TokenPayload } from "google-auth-library";
 import axios from "axios";
 import { validateRequest } from "../middleware";
 import { GetLocationNameFromCoordinatesQuery } from "../lib/types";
+import { Database } from "../lib/utils";
 
 const router = Router();
 
@@ -11,6 +13,8 @@ router.get("/", validateRequest, async (req: Request, res: Response) => {
         res.status(400).send();
         return;
     }
+    // @ts-ignore
+    const payload = req.payload || ({} as TokenPayload);
     try {
         const result = await axios({
             method: "GET",
@@ -19,7 +23,17 @@ router.get("/", validateRequest, async (req: Request, res: Response) => {
         if (result.status !== 200) {
             throw result.data;
         }
-        res.status(200).json(result.data);
+        const validResult = result.data["results"].find((element:any) => element["formatted_address"]) as any;
+        if (validResult) { 
+            await Database.Location.create(payload.sub, latitude, longitude, validResult["formatted_address"]);
+            res.status(200).json({
+                latitude,
+                longitude,
+                formattedAddress: validResult["formatted_address"]
+            });
+        } else {
+            res.status(404).send();
+        }
     } catch (err) {
         console.log(err);
         res.status(500).send();
