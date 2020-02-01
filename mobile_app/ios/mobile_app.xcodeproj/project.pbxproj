@@ -161,7 +161,6 @@
 				9BD3D4FF4CF132BC6EE343B2 /* Pods-mobile_appTests.debug.xcconfig */,
 				551FE7F17D6F27205E97B6FB /* Pods-mobile_appTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -309,6 +308,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
