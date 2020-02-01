@@ -4,8 +4,12 @@ import { config } from "dotenv";
 import express from "express";
 import { Application, Response } from "express";
 import driver from "./routes/driver";
+import user from "./routes/user";
+import { Database } from "./lib/utils";
 
 config();
+
+Database.seed();
 
 const PORT = process.env.port || 8080;
 
@@ -20,6 +24,7 @@ app.get("/", (_, res: Response) => {
 });
 
 app.use("/driver", driver);
+app.use("/user", user);
 
 app.listen(PORT, () => {
   // tslint:disable-next-line
