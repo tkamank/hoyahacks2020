@@ -184,12 +184,30 @@ export default class SplashScreen extends Component<Props, State> {
         }
     }
 
-    _handleMapLongPressed = (event: MapEvent) => {
+    _handleMapLongPressed = async (event: MapEvent) => {
         const { coordinate } = event.nativeEvent;
         const { recentLocations } = this.state;
-        const newLocation: Location = {latitude: coordinate.latitude, longitude: coordinate.longitude, title: "New Location"};
-        // TODO: Handle coordinates
-        this.setState({ recentLocations: [newLocation].concat(recentLocations)});
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/location?latitude=${coordinate.latitude}&longitude=${coordinate.longitude}`, {
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`
+                })
+            });
+            if (response.ok) {
+                const json = await response.json() as any;
+                const validResult = json["results"].find((element: any) => element["formatted_address"]);
+                if (validResult) {
+                    const newLocation: Location = { latitude: coordinate.latitude, longitude: coordinate.longitude, title: validResult["formatted_address"] };
+                    this.setState({ recentLocations: [newLocation].concat(recentLocations) });
+                }
+            }
+        } catch (err) {
+            console.warn(err);
+        }
     };
 
     render() {
