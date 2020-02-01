@@ -5,6 +5,17 @@ import { Database } from "../lib/utils";
 
 const router = Router();
 
+router.get("/", validateRequest, async (req: Request, res: Response) => {
+  // @ts-ignore
+  const payload = req.payload as TokenPayload;
+  try {
+    const user = await Database.User.read(payload.sub);
+    res.status(200).json(user);
+  } catch {
+    res.status(401).send();
+  }
+});
+
 router.post("/create", validateRequest, async (req: Request, res: Response) => {
   // @ts-ignore
   const payload = req.payload as TokenPayload;
