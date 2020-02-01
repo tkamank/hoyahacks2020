@@ -122,6 +122,34 @@ export default class SplashScreen extends Component<Props, State> {
         }
     }
 
+    _verifyUserExists = async () => {
+        try {
+            const { navigation } = this.props;
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/user`, {
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`
+                })
+            });
+            if (response.status === 401) {
+                this._createUser();
+            }
+        } catch (err) {
+            console.warn(err);
+            Alert.alert(
+                "Unable to create an account!",
+                "An unexpected error occurred!",
+                [
+                    {
+                        text: "Okay"
+                    }
+                ]);
+        }
+    }
+
     _verifyIsDriver = async () => {
         try {
             const { navigation } = this.props;
@@ -190,7 +218,13 @@ export default class SplashScreen extends Component<Props, State> {
 
                 </SafeAreaView>
                 <View style={{ flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center', borderColor: '#D95F76', borderStyle: 'solid', borderTopWidth: 2 }}>
-                    <Text style={{ flex: 1, textAlign: 'center', color: '#f3f3f3', fontWeight: '500', fontSize: 24 }}>Ride</Text>
+                    <View style={{ flex: 1 }}>
+                        <Button
+                            title="Ride"
+                            onPress={this._verifyUserExists}
+                            color="#f3f3f3"  
+                        />
+                    </View>
                     <View style={{ flex: 1 }}>
                         <Button
                             title="Drive"
