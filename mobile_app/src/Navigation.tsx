@@ -5,6 +5,7 @@ import { GoogleSignin } from '@react-native-community/google-signin';
 import { CLIENT_ID, IOS_CLIENT_ID } from 'react-native-dotenv';
 import Login from './screens/Login';
 import Splash from './screens/Splash';
+import Home from './screens/Home';
 
 GoogleSignin.configure({
   scopes: [], // what API you want to access on behalf of the user, default is email and profile
@@ -15,7 +16,8 @@ GoogleSignin.configure({
 
 const Navigator = createStackNavigator({
     Login: { screen: Login },
-    Splash: { screen: Splash }
+    Splash: { screen: Splash },
+    Home: { screen: Home }
 }, {
     initialRouteName: 'Splash'
 });
