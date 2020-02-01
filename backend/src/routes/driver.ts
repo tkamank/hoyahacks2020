@@ -18,7 +18,7 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
     // TODO: Resolve this on the server
     // await GCV.annotateImage(image);
     await Database.User.updateDriverStatus(payload.sub, true);
-    await Database.DriversLicenses.create(payload.email, image);
+    // await Database.DriversLicenses.create(payload.email, image);
     res.status(200).send();
   } catch (err) {
     res.status(500).json(err);
