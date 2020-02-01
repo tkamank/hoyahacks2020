@@ -6,23 +6,37 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
+import { StackActions, NavigationActions, NavigationSwitchScreenProps } from "react-navigation";
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-community/google-signin';
 import { BackgroundImage, Logo } from "../assets";
 import { Sizes } from "../lib/constants";
 
-export default class LoginScreen extends Component {
+interface Props extends NavigationSwitchScreenProps { };
+
+export default class LoginScreen extends Component<Props> {
   static navigationOptions = () => {
     return {
       header: () => null
     }
   }
 
+  _resetToScreen = (routeName: string) => {
+    const { navigation } = this.props;
+    const resetAction = StackActions.reset({
+      index: 0, 
+      actions: [NavigationActions.navigate({routeName})]
+    });
+    navigation.dispatch(resetAction);
+  }
+
   _signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      // TODO: Implement validation with server
+      console.log(userInfo);
+      this._resetToScreen("Home");
     } catch (error) {
+      console.warn(error);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {

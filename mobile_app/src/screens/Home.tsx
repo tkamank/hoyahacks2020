@@ -2,13 +2,9 @@ import React, { Component } from 'react';
 import {
   SafeAreaView,
   StatusBar,
-  View,
-  Image,
-  ImageBackground,
 } from 'react-native';
-import {NavigationSwitchScreenProps } from "react-navigation";
-import { BackgroundImage, Logo } from "../assets";
-import { Sizes } from "../lib/constants";
+import { NavigationSwitchScreenProps } from "react-navigation";
+import MapView from 'react-native-maps';
 
 interface Props extends NavigationSwitchScreenProps { };
 
@@ -22,14 +18,16 @@ export default class SplashScreen extends Component<Props> {
   render() {
     return (
       <>
-        <ImageBackground source={BackgroundImage} style={{ width: "100%", height: "100%", position: "absolute", zIndex: -1 }} />
-        <StatusBar barStyle="light-content" />
-        <SafeAreaView style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
-          <View style={{ flex: 1 }} />
-          <View style={{ flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <Image source={Logo} style={{ width: Sizes.SplashScreenLogo, height: Sizes.SplashScreenLogo }} />
-          </View>
-          <View style={{ flex: 1 }} />
+        <StatusBar barStyle="dark-content" />
+        <SafeAreaView style={{ flex: 1 }}>
+          <MapView
+            style={{ flex: 1 }}
+            region={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
+            }} />
         </SafeAreaView>
       </>
     );
