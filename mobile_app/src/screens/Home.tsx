@@ -9,7 +9,7 @@ import {
     Alert
 } from 'react-native';
 import { NavigationSwitchScreenProps } from "react-navigation";
-import MapView, { Region } from 'react-native-maps';
+import MapView, { Region, MapEvent } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GoogleSignin } from "@react-native-community/google-signin";
 // @ts-ignore
@@ -184,6 +184,11 @@ export default class SplashScreen extends Component<Props, State> {
                 ]);
         }
     }
+    
+    _handleMapLongPressed = (event: MapEvent) => {
+        const { coordinate } = event.nativeEvent;
+        // TODO: Handle coordinates
+    };
 
     render() {
         const { region } = this.state;
@@ -199,7 +204,9 @@ export default class SplashScreen extends Component<Props, State> {
                         longitude: -122.4324,
                         latitudeDelta: 0.015,
                         longitudeDelta: 0.0121,
-                    }} />
+                    }}
+                    onLongPress={this._handleMapLongPressed}
+                />
                 <SafeAreaView style={{ flex: 1.6 }}>
                     <View style={{ flex: 0.5, backgroundColor: '#F3F3F3', alignItems: 'center' }}>
                         <Text style={{ paddingTop: "5%", paddingBottom: "8%", shadowColor: '#000000', color: '#D95F76', fontSize: 26, fontWeight: "600" }}>
@@ -222,7 +229,7 @@ export default class SplashScreen extends Component<Props, State> {
                         <Button
                             title="Ride"
                             onPress={this._verifyUserExists}
-                            color="#f3f3f3"  
+                            color="#f3f3f3"
                         />
                     </View>
                     <View style={{ flex: 1 }}>
