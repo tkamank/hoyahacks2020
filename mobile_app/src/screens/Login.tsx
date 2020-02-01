@@ -13,10 +13,13 @@ import {
   SafeAreaView,
   StatusBar,
   View,
+  Image,
   ImageBackground,
 } from 'react-native';
 // @ts-ignore
-import Image from "../assets/polyBackground.png";
+import Image1 from "../assets/polyBackground.png";
+// @ts-ignore
+import Image2 from "../assets/Rapidd.png";
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-community/google-signin';
 // @ts-ignore
 import { CLIENT_ID, IOS_CLIENT_ID } from 'react-native-dotenv';
@@ -49,8 +52,9 @@ const signIn = async () => {
 const Login = () => {
   return (
     <>
-      <ImageBackground source={Image} style={{ width: "100%", height: "100%", position: "absolute", zIndex: -1 }} />
+      <ImageBackground source={Image1} style={{ width: "100%", height: "100%", position: "absolute", zIndex: -1 }} />
       <StatusBar barStyle="dark-content" />
+      <Image source={Image2}  style={{ width: "50%", height: "50%", position: "fixed", marginLeft:"auto", marginRight:"auto",paddingTop:"20px" }}/>
       <SafeAreaView>
         <View style={{ paddingTop: "110%", marginLeft: "auto", marginRight: "auto" }}>
           <View />
