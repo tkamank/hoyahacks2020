@@ -91,9 +91,8 @@ export default class SplashScreen extends Component<Props, State> {
         return (
             <>
                 <StatusBar barStyle="dark-content" />
-                <SafeAreaView style={{ flex: 1 }}>
-                    <MapView
-                        style={{ flex: 1 }}
+                <MapView
+                        style={{ flex: 2.4 }}
                         showsUserLocation={true}
                         region={region || {
                             latitude: 37.78825,
@@ -101,22 +100,28 @@ export default class SplashScreen extends Component<Props, State> {
                             latitudeDelta: 0.015,
                             longitudeDelta: 0.0121,
                         }} />
-                    <View style={{ flex: 0.7, backgroundColor: '#F3F3F3', alignItems: 'center'}}>
-                            <Text style={{paddingTop: "5%", paddingBottom: "5%", paddingRight: "40%", color: '#D95F76', fontSize: 26, fontWeight: "600" }}>
+                <SafeAreaView style={{flex: 1.6}}>
+                    <View style={{ flex: 0.5, backgroundColor: '#F3F3F3', alignItems: 'center'}}>
+                            <Text style={{paddingTop: "5%", paddingBottom: "8%",shadowColor: '#000000', color: '#D95F76', fontSize: 26, fontWeight: "600" }}>
                                 Plans for today?
                             </Text>
-                        <View style={{flex: 1, justifyContent: "center"}}>
+                            </View>
+                        <View style={{flex: 1.5, justifyContent: "center"}}>
                                 <FlatList
                                     data={RECENT_LOCATIONS}
                                     renderItem={({ item }: { item: Location }) => 
-                                    <View style={{alignItems: 'center'}}><Text style={{color: '#F3F3F3', fontWeight: "600", padding: 5, overflow: 'hidden', borderRadius: 6, fontSize: 28, margin: '1%',backgroundColor: '#D95F76'}}>{item.title}</Text></View>}
+                                    <View style={{alignItems: 'center'}}><Text style={{color: '#f3f3f3', fontWeight: "700", padding: 10, overflow: 'hidden', borderRadius: 6, fontSize: 24, margin: '1%',backgroundColor: '#2C73A6'}}>{item.title}</Text></View>}
                                     keyExtractor={(_: Location, i: number) => i.toString()}
                                 >
                                 </FlatList>
                         </View>
-                        
-                    </View>
+                    
                 </SafeAreaView>
+                <View style={{flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center'}}>
+                        <Text style={{flex: 1, textAlign: 'center', color: '#f3f3f3', fontWeight: '500', fontSize: 24}}>Ride</Text>
+                        <Text style={{flex: 1, textAlign: 'center', color: '#f3f3f3', fontWeight: '500', fontSize: 24}}>Drive</Text>
+                        <Text style={{flex: 1, textAlign: 'center', color: '#f3f3f3', fontWeight: '500', fontSize: 24}}>User</Text>
+                </View>
             </>
         );
     }
