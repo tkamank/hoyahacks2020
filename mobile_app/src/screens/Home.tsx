@@ -30,7 +30,7 @@ const RECENT_LOCATIONS: Location[] = [
         latitude: 38.888420,
         longitude: -77.022904,
         distanceFromUser: null,
-        title: "Hirshhorn Art Gallery"
+        title: "Ashleigh's Crib"
     },
     {
         latitude: 38.907582,
@@ -101,15 +101,15 @@ export default class SplashScreen extends Component<Props, State> {
                             latitudeDelta: 0.015,
                             longitudeDelta: 0.0121,
                         }} />
-                    <View style={{ flex: 0.5, backgroundColor: '#F3F3F3'}}>
-                            <Text style={{paddingLeft: '5%', paddingTop: '5%', color: '#D95F76', fontSize: 26, fontWeight: "600" }}>
+                    <View style={{ flex: 0.7, backgroundColor: '#F3F3F3', alignItems: 'center'}}>
+                            <Text style={{paddingTop: "5%", paddingBottom: "5%", paddingRight: "40%", color: '#D95F76', fontSize: 26, fontWeight: "600" }}>
                                 Plans for today?
                             </Text>
                         <View style={{flex: 1, justifyContent: "center"}}>
                                 <FlatList
                                     data={RECENT_LOCATIONS}
                                     renderItem={({ item }: { item: Location }) => 
-                                    <View><Text>{item.title}</Text></View>}
+                                    <View style={{alignItems: 'center'}}><Text style={{color: '#F3F3F3', fontWeight: "600", padding: 5, overflow: 'hidden', borderRadius: 6, fontSize: 28, margin: '1%',backgroundColor: '#D95F76'}}>{item.title}</Text></View>}
                                     keyExtractor={(_: Location, i: number) => i.toString()}
                                 >
                                 </FlatList>
