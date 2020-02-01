@@ -23,28 +23,9 @@ interface State {
     region?: Region;
     currentPosition?: Geolocation.GeoPosition;
     riderStatus: "rider" | "driver";
-}
+    recentLocations: Location[];
 
-const RECENT_LOCATIONS: Location[] = [
-    {
-        latitude: 38.922406,
-        longitude: -77.042154,
-        distanceFromUser: null,
-        title: "Songbyrd Bar DC"
-    },
-    {
-        latitude: 38.888420,
-        longitude: -77.022904,
-        distanceFromUser: null,
-        title: "Ashleigh's Crib"
-    },
-    {
-        latitude: 38.907582,
-        longitude: -77.072351,
-        distanceFromUser: null,
-        title: "Georgetown University"
-    }
-];
+}
 
 export default class SplashScreen extends Component<Props, State> {
     static navigationOptions = () => {
@@ -62,7 +43,22 @@ export default class SplashScreen extends Component<Props, State> {
                 latitudeDelta: 0.015,
                 longitudeDelta: 0.0121,
             },
-            riderStatus: "rider"
+            riderStatus: "rider",
+            recentLocations: [{
+                latitude: 38.922406,
+                longitude: -77.042154,
+                title: "Songbyrd Bar DC"
+            },
+            {
+                latitude: 38.888420,
+                longitude: -77.022904,
+                title: "Ashleigh's Kickback"
+            },
+            {
+                latitude: 38.907582,
+                longitude: -77.072351,
+                title: "Georgetown University"
+            }]
         };
     }
 
@@ -192,11 +188,14 @@ export default class SplashScreen extends Component<Props, State> {
 
     _handleMapLongPressed = (event: MapEvent) => {
         const { coordinate } = event.nativeEvent;
+        const { recentLocations } = this.state;
+        const newLocation: Location = {latitude: coordinate.latitude, longitude: coordinate.longitude, title: "New Location"};
         // TODO: Handle coordinates
+        this.setState({ recentLocations: [newLocation].concat(recentLocations)});
     };
 
     render() {
-        const { region, riderStatus } = this.state;
+        const { region, riderStatus, recentLocations } = this.state;
 
         return (
             <>
@@ -213,7 +212,7 @@ export default class SplashScreen extends Component<Props, State> {
                     onLongPress={this._handleMapLongPressed}
                     onRegionChangeComplete={region => this.setState({ region })}
                 />
-                {riderStatus === "rider" && <RiderMapActionTab locations={RECENT_LOCATIONS} />}
+                {riderStatus === "rider" && <RiderMapActionTab locations={recentLocations} />}
                 <View style={{ flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center', borderColor: '#D95F76', borderStyle: 'solid', borderTopWidth: 2 }}>
                     <View style={{ flex: 1 }}>
                         <Button
