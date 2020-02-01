@@ -1,8 +1,8 @@
-import axios from "axios";
 import { Router, Request, Response } from "express";
 import { TokenPayload } from "google-auth-library";
 import { validateRequest } from "../middleware";
 import { RegisterAsNewDriverRequestBody } from "../lib/types";
+import { GCV } from "../lib/utils";
 
 const router = Router();
 
@@ -15,28 +15,7 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
   // @ts-ignore
   const payload = req.payload || ({} as TokenPayload);
   try {
-    const result = await axios({
-      url: `https://vision.googleapis.com/v1/images:annotate?key=${process.env.API_KEY}`,
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
-        "Content-Type": "application/json; charset=utf-8",
-      },
-      data: {
-        requests: [
-          {
-            image: {
-              content: image,
-            },
-            features: [
-              {
-                type: "TEXT_DETECTION",
-              },
-            ],
-          },
-        ],
-      },
-    });
+    const result = await GCV.annotateImage(image);
     res.status(200).json({
       payload,
       result: result.data,
