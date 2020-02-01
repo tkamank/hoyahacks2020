@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import {
-    SafeAreaView,
     StatusBar,
     View,
-    Text,
-    FlatList,
     Button,
     Alert
 } from 'react-native';
@@ -15,6 +12,7 @@ import { GoogleSignin } from "@react-native-community/google-signin";
 // @ts-ignore
 import { GCP_ENDPOINT } from 'react-native-dotenv';
 import { Location, User } from '../lib/types';
+import DriverMapActionTab from "../components/DriverMapActionTab";
 import RiderMapActionTab from "../components/RiderMapActionTab";
 
 interface Props extends NavigationSwitchScreenProps { };
@@ -212,7 +210,10 @@ export default class SplashScreen extends Component<Props, State> {
                     onLongPress={this._handleMapLongPressed}
                     onRegionChangeComplete={region => this.setState({ region })}
                 />
-                {riderStatus === "rider" && <RiderMapActionTab locations={recentLocations} />}
+                {riderStatus === "rider"
+                    ? <RiderMapActionTab locations={recentLocations} />
+                    : <DriverMapActionTab />
+                }
                 <View style={{ flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center', borderColor: '#D95F76', borderStyle: 'solid', borderTopWidth: 2 }}>
                     <View style={{ flex: 1 }}>
                         <Button
