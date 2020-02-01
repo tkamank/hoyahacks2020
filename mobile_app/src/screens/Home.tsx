@@ -7,11 +7,9 @@ import {
     FlatList,
     Button,
     Alert
-    StyleSheet,
-    EventSubscriptionVendor
 } from 'react-native';
 import { NavigationSwitchScreenProps } from "react-navigation";
-import MapView, { Region, Marker } from 'react-native-maps';
+import MapView, { Region } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GoogleSignin } from "@react-native-community/google-signin";
 // @ts-ignore
