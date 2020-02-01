@@ -110,17 +110,16 @@ export default class SplashScreen extends Component<Props, State> {
                                 <FlatList
                                     data={RECENT_LOCATIONS}
                                     renderItem={({ item }: { item: Location }) => 
-                                    <View style={{alignItems: 'center'}}><Text style={{color: '#f3f3f3', fontWeight: "700", padding: 10, overflow: 'hidden', borderRadius: 6, fontSize: 24, margin: '1%',backgroundColor: '#2C73A6'}}>{item.title}</Text></View>}
+                                    <View style={{alignItems: 'center'}}><Text style={{color: '#000000', backgroundColor: '#f5f5f5', borderRadius: 6, overflow: 'hidden', fontWeight: "700", padding: 10, borderColor: '#000000', borderStyle: 'solid', fontSize: 24, margin: '1%', borderWidth: 2}}>{item.title}</Text></View>}
                                     keyExtractor={(_: Location, i: number) => i.toString()}
                                 >
                                 </FlatList>
                         </View>
                     
                 </SafeAreaView>
-                <View style={{flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center'}}>
+                <View style={{flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center', borderColor: '#D95F76', borderStyle:'solid', borderTopWidth: 2}}>
                         <Text style={{flex: 1, textAlign: 'center', color: '#f3f3f3', fontWeight: '500', fontSize: 24}}>Ride</Text>
                         <Text style={{flex: 1, textAlign: 'center', color: '#f3f3f3', fontWeight: '500', fontSize: 24}}>Drive</Text>
-                        <Text style={{flex: 1, textAlign: 'center', color: '#f3f3f3', fontWeight: '500', fontSize: 24}}>User</Text>
                 </View>
             </>
         );
