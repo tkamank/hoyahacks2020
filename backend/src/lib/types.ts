@@ -7,3 +7,8 @@ export interface User {
 export interface RegisterAsNewDriverRequestBody {
   image?: string;
 }
+
+export interface GetLocationNameFromCoordinatesQuery {
+  latitude?: string;
+  longitude?: string;
+}

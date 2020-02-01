@@ -5,6 +5,7 @@ import express from "express";
 import { Application, Response } from "express";
 import driver from "./routes/driver";
 import user from "./routes/user";
+import location from "./routes/location"
 import { Database } from "./lib/utils";
 
 config();
@@ -25,6 +26,7 @@ app.get("/", (_, res: Response) => {
 
 app.use("/driver", driver);
 app.use("/user", user);
+app.use("/location", location);
 
 app.listen(PORT, () => {
   // tslint:disable-next-line
