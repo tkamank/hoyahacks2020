@@ -6,18 +6,34 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
+import { NavigationSwitchScreenProps } from "react-navigation";
+import { GoogleSignin } from "@react-native-community/google-signin";
 import { BackgroundImage, Logo } from "../assets";
 import { Sizes } from "../lib/constants";
 
-export default class SplashScreen extends Component {
+interface Props extends NavigationSwitchScreenProps { };
+
+export default class SplashScreen extends Component<Props> {
   static navigationOptions = () => {
     return {
       header: () => null
     }
   }
 
+  componentDidMount() {
+    this._checkForUser();
+  }
+
   _checkForUser = async () => {
-    // TODO: Implement method
+    const { navigation } = this.props;
+    try {
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      if (isSignedIn) {
+        // TODO: Implement screen
+      } else {
+        navigation.navigate("Login");
+      }
+    } catch { }
   }
 
   render() {
