@@ -133,7 +133,7 @@ export const Database = {
         }
       );
       connection.query(
-        `CREATE TABLE drivers_licenses (user_id VARCHAR(6) AUTOINCREMENT PRIMARY KEY, email VARCHAR(150) UNIQUE NOT NULL, data MEDIUMTEXT NOT NULL);`,
+        `CREATE TABLE drivers_licenses (user_id VARCHAR(6) AUTO_INCREMENT PRIMARY KEY, email VARCHAR(150) UNIQUE NOT NULL, data MEDIUMTEXT NOT NULL);`,
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);
