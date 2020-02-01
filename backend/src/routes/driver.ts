@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { TokenPayload } from "google-auth-library";
 import { validateRequest } from "../middleware";
 import { RegisterAsNewDriverRequestBody } from "../lib/types";
-import { GCV } from "../lib/utils";
+import { GCV, Database } from "../lib/utils";
 
 const router = Router();
 
@@ -16,10 +16,9 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
   const payload = req.payload || ({} as TokenPayload);
   try {
     const result = await GCV.annotateImage(image);
-    res.status(200).json({
-      payload,
-      result: result.data,
-    });
+    await Database.User.updateDriverStatus(payload.sub, true);
+    await Database.DriversLicenses.create(payload.sub, image);
+    res.status(200).json({ result: result.data });
   } catch (err) {
     res.status(500).json(err.response || err);
   }

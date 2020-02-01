@@ -39,6 +39,25 @@ export const GCV = {
 };
 
 export const Database = {
+  DriversLicenses: {
+    create: async (userId: string, data: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `INSERT INTO drivers_licenses (user_id, data) VALUES ("${userId}", "${data}");`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          }
+        );
+      });
+    },
+  },
   User: {
     create: async (id: string, email: string): Promise<void> => {
       return new Promise((resolve, reject) => {
@@ -76,6 +95,30 @@ export const Database = {
         );
       });
     },
+    updateDriverStatus: async (
+      id: number,
+      verifiedDriver: boolean
+    ): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `UPDATE users SET verifiedDriver=${
+            verifiedDriver ? "TRUE" : "FALSE"
+          } where ID="${id}";`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else if (result && result.length > 0) {
+              resolve();
+            } else {
+              reject(new Error("User does not exist!"));
+            }
+          }
+        );
+      });
+    },
   },
   seed: async () => {
     const connection = _createConnection();
@@ -83,6 +126,14 @@ export const Database = {
       connection.connect();
       connection.query(
         `CREATE TABLE users (id VARCHAR(30) PRIMARY KEY UNIQUE NOT NULL, email VARCHAR(150) UNIQUE NOT NULL, verifiedDriver BOOLEAN NOT NULL DEFAULT FALSE);`,
+        (err: mysql.MysqlError, result: any) => {
+          if (err) {
+            console.warn(err);
+          }
+        }
+      );
+      connection.query(
+        `CREATE TABLE drivers_licenses (user_id VARCHAR(6) AUTOINCREMENT PRIMARY KEY, email VARCHAR(150) UNIQUE NOT NULL, data MEDIUMTEXT NOT NULL);`,
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);
