@@ -3,7 +3,6 @@ import cors from "cors";
 import { config } from "dotenv";
 import express from "express";
 import { Application, Response } from "express";
-import fileUpload from "express-fileupload";
 import driver from "./routes/driver";
 
 config();
@@ -15,13 +14,6 @@ const app = express() as Application;
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(cors());
-app.use(
-  fileUpload({
-    limits: { fileSize: 50 * 1024 * 1024 },
-    useTempFiles: true,
-    tempFileDir: "/tmp/",
-  })
-);
 
 app.get("/", (_, res: Response) => {
   res.status(200).send("Hello, Hoya!");

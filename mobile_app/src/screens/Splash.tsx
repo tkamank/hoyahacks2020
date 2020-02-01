@@ -27,8 +27,8 @@ export default class SplashScreen extends Component<Props> {
   _resetToScreen = (routeName: string) => {
     const { navigation } = this.props;
     const resetAction = StackActions.reset({
-      index: 0, 
-      actions: [NavigationActions.navigate({routeName})]
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName })]
     });
     navigation.dispatch(resetAction);
   }
@@ -37,11 +37,15 @@ export default class SplashScreen extends Component<Props> {
     try {
       const isSignedIn = await GoogleSignin.isSignedIn();
       if (isSignedIn) {
+        await GoogleSignin.signInSilently();
         this._resetToScreen("Home");
       } else {
         this._resetToScreen("Login");
       }
-    } catch { }
+    } catch {
+      // If an error occurs assume user is not authenticated.
+      this._resetToScreen("Login");
+    }
   }
 
   render() {
