@@ -1,7 +1,10 @@
 import * as bodyparser from "body-parser";
 import cors from "cors";
+import { config } from "dotenv";
 import express from "express";
 import { Application, Response } from "express";
+
+config();
 
 const PORT = process.env.port || 8080;
 
