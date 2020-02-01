@@ -1,67 +1,38 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-import React from 'react';
+import React, { Component } from 'react';
 import {
   SafeAreaView,
   StatusBar,
   View,
+  Image,
   ImageBackground,
 } from 'react-native';
-// @ts-ignore
-import Image from "../assets/polyBackground.png"; 
-// @ts-ignore
-import Logo from "../assets/Rapidd.png";
-import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-community/google-signin';
-// @ts-ignore
-import { CLIENT_ID, IOS_CLIENT_ID } from 'react-native-dotenv';
+import { BackgroundImage, Logo } from "../assets";
+import { Sizes } from "../lib/constants";
 
-GoogleSignin.configure({
-  scopes: [], // what API you want to access on behalf of the user, default is email and profile
-  webClientId: CLIENT_ID, // client ID of type WEB for your server (needed to verify user ID and offline access)
-  offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
-  iosClientId: IOS_CLIENT_ID, // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
-});
-
-const signIn = async () => {
-  try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    console.log(userInfo);
-  } catch (error) {
-    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-      // user cancelled the login flow
-    } else if (error.code === statusCodes.IN_PROGRESS) {
-      // operation (e.g. sign in) is in progress already
-    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      // play services not available or outdated
-    } else {
-      // some other error happened
+export default class SplashScreen extends Component {
+  static navigationOptions = () => {
+    return {
+      header: () => null
     }
   }
-};
 
-const Splash = () => {
-  return (
-    <>
-      <ImageBackground source={Image} style={{ width: "100%", height: "100%", position: "absolute", zIndex: -1 }} />
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <View style={{ paddingTop: "110%", marginLeft: "auto", marginRight: "auto" }}>
-          <View />
-          <Image source={Logo} style={{}} />
-          <View />
-        </View>
-      </SafeAreaView>
-    </>
-  );
-};
+  _checkForUser = async () => {
+    // TODO: Implement method
+  }
 
-export default Splash;
+  render() {
+    return (
+      <>
+        <ImageBackground source={BackgroundImage} style={{ width: "100%", height: "100%", position: "absolute", zIndex: -1 }} />
+        <StatusBar barStyle="light-content" />
+        <SafeAreaView style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+            <Image source={Logo} style={{ width: Sizes.SplashScreenLogo, height: Sizes.SplashScreenLogo }} />
+          </View>
+          <View style={{ flex: 1 }} />
+        </SafeAreaView>
+      </>
+    );
+  }
+}
