@@ -40,12 +40,12 @@ export const GCV = {
 
 export const Database = {
   DriversLicenses: {
-    create: async (userId: string, data: string): Promise<void> => {
+    create: async (email: string, data: string): Promise<void> => {
       return new Promise((resolve, reject) => {
         const connection = _createConnection();
         connection.connect();
         connection.query(
-          `INSERT INTO drivers_licenses (user_id, data) VALUES ("${userId}", "${data}");`,
+          `INSERT INTO drivers_licenses (email, data) VALUES ("${email}", "${data}");`,
           (err: mysql.MysqlError, result: any) => {
             connection.end();
             if (err) {
@@ -133,7 +133,7 @@ export const Database = {
         }
       );
       connection.query(
-        `CREATE TABLE drivers_licenses (user_id VARCHAR(6) AUTO_INCREMENT PRIMARY KEY, email VARCHAR(150) UNIQUE NOT NULL, data MEDIUMTEXT NOT NULL);`,
+        `CREATE TABLE drivers_licenses (id VARCHAR(6) AUTO_INCREMENT PRIMARY KEY, email VARCHAR(150) UNIQUE NOT NULL, data MEDIUMTEXT NOT NULL);`,
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);
