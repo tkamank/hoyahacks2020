@@ -11,15 +11,20 @@ export const validateRequest = async (
   if (req.headers && req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1];
     if (token.length > 0) {
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.CLIENT_ID,
-      });
-      const payload = ticket.getPayload();
-      // @ts-ignore
-      req.payload = payload;
-      next();
-      return;
+      try {
+        const ticket = await client.verifyIdToken({
+          idToken: token,
+          audience: process.env.CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        // @ts-ignore
+        req.payload = payload;
+        next();
+        return;
+      } catch (err) {
+        res.status(403).send();
+        return;
+      }
     }
   }
   res.status(401).send();
