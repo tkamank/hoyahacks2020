@@ -39,8 +39,6 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
     });
     res.status(200).json({
       payload,
-      files: req.files,
-      // url: `data:image/jpeg;base64,${base64}`,
       result: result.data,
     });
   } catch (err) {
