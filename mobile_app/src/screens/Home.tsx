@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {
   SafeAreaView,
   StatusBar,
+  View,
+  Text,
 } from 'react-native';
 import { NavigationSwitchScreenProps } from "react-navigation";
 import MapView, { Region } from 'react-native-maps';
@@ -70,8 +72,14 @@ export default class SplashScreen extends Component<Props, State> {
               longitude: -122.4324,
               latitudeDelta: 0.015,
               longitudeDelta: 0.0121,
-            }}
-          />
+            }} />
+            <View style={{flex: 0.5, backgroundColor: '#D95F76'}}>
+                <View style={{paddingLeft: '5%', paddingTop: '5%'}}>
+                <Text style={{color: 'white', fontSize: 26, fontWeight: "500"}}>
+                Plans for today?
+                </Text>
+                </View>
+            </View>
         </SafeAreaView>
       </>
     );
