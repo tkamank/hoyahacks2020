@@ -2,9 +2,9 @@ import * as bodyparser from "body-parser";
 import cors from "cors";
 import { config } from "dotenv";
 import express from "express";
-import { Application, Request, Response } from "express";
-import { validateRequest } from "./middleware";
-import { TokenPayload } from "google-auth-library";
+import { Application, Response } from "express";
+import fileUpload from "express-fileupload";
+import driver from "./routes/driver";
 
 config();
 
@@ -15,16 +15,19 @@ const app = express() as Application;
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(cors());
+app.use(
+  fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 },
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+);
 
 app.get("/", (_, res: Response) => {
   res.status(200).send("Hello, Hoya!");
 });
 
-app.get("/verify", validateRequest, (req: Request, res: Response) => {
-  // @ts-ignore
-  const payload = req.payload || {} as TokenPayload;
-  res.status(200).json(payload);
-});
+app.use("/driver", driver);
 
 app.listen(PORT, () => {
   // tslint:disable-next-line
