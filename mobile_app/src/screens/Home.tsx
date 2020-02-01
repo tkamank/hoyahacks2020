@@ -21,6 +21,7 @@ interface Props extends NavigationSwitchScreenProps { };
 interface State {
     region?: Region;
     currentPosition?: Geolocation.GeoPosition;
+    riderStatus: "rider" | "driver";
 }
 
 const RECENT_LOCATIONS: Location[] = [
@@ -59,7 +60,8 @@ export default class SplashScreen extends Component<Props, State> {
                 longitude: -122.4324,
                 latitudeDelta: 0.015,
                 longitudeDelta: 0.0121,
-            }
+            },
+            riderStatus: "rider"
         };
     }
 
@@ -123,6 +125,7 @@ export default class SplashScreen extends Component<Props, State> {
     }
 
     _verifyUserExists = async () => {
+        this.setState({ riderStatus: "rider" });
         try {
             const { navigation } = this.props;
             const user = await GoogleSignin.getCurrentUser();
@@ -151,6 +154,7 @@ export default class SplashScreen extends Component<Props, State> {
     }
 
     _verifyIsDriver = async () => {
+        this.setState({ riderStatus: "driver" });
         try {
             const { navigation } = this.props;
             const user = await GoogleSignin.getCurrentUser();
@@ -184,7 +188,7 @@ export default class SplashScreen extends Component<Props, State> {
                 ]);
         }
     }
-    
+
     _handleMapLongPressed = (event: MapEvent) => {
         const { coordinate } = event.nativeEvent;
         // TODO: Handle coordinates
