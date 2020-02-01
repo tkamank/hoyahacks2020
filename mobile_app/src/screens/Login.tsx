@@ -12,13 +12,11 @@ import React from 'react';
 import {
   SafeAreaView,
   StatusBar,
-  StyleSheet,
-  Text,
   View,
   ImageBackground,
 } from 'react-native';
 // @ts-ignore
-import Image from "./assets/polyBackground.png";
+import Image from "../assets/polyBackground.png";
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-community/google-signin';
 // @ts-ignore
 import { CLIENT_ID, IOS_CLIENT_ID } from 'react-native-dotenv';
@@ -48,7 +46,7 @@ const signIn = async () => {
   }
 };
 
-const App = () => {
+const Login = () => {
   return (
     <>
       <ImageBackground source={Image} style={{ width: "100%", height: "100%", position: "absolute", zIndex: -1 }} />
@@ -64,4 +62,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Login;
