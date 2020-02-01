@@ -6,6 +6,9 @@ import {
 } from 'react-native';
 import { NavigationSwitchScreenProps } from "react-navigation";
 import ImagePicker, { ImagePickerResponse } from 'react-native-image-picker';
+import { GoogleSignin } from "@react-native-community/google-signin";
+// @ts-ignore
+import { GCP_ENDPOINT } from 'react-native-dotenv';
 
 interface Props extends NavigationSwitchScreenProps { };
 
@@ -29,7 +32,7 @@ export default class RegisterAsNewDriver extends Component<Props> {
       },
     };
 
-    ImagePicker.showImagePicker(options, (response: ImagePickerResponse ) => {
+    ImagePicker.showImagePicker(options, async (response: ImagePickerResponse) => {
       const { navigation } = this.props;
 
       if (response.didCancel) {
@@ -38,10 +41,37 @@ export default class RegisterAsNewDriver extends Component<Props> {
         Alert.alert("Unable to select Drivers License", "An unexpected error occurred!", [
           { text: "Cancel", onPress: navigation.goBack },
           { text: "Retry", onPress: this._selectDriversLicense }
-        ])
+        ]);
         console.warn('ImagePicker Error: ', response.error);
       } else {
-        // TODO: Implement a handler for handling selected image
+        const image = response.data;
+        try {
+          const user = await GoogleSignin.getCurrentUser();
+          if (!user) {
+            throw new Error("No user!");
+          }
+          const body = JSON.stringify({
+            image
+          });
+          const response = await fetch(`${GCP_ENDPOINT}/driver/join`, {
+            method: "POST",
+            headers: new Headers({
+              Authorization: `Bearer ${user.idToken}`,
+              "Content-Type": "application/json"
+            }),
+            body
+          });
+          if (response.ok) {
+            const { navigation } = this.props;
+            navigation.goBack();
+          } else {
+            Alert.alert("Unable to upload Drivers License", "An unexpected error occurred!", [
+              { text: "Okay", onPress: navigation.goBack },
+            ]);
+          }
+        } catch (err) {
+          console.warn(err);
+        }
       }
     });
   }

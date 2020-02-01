@@ -15,10 +15,10 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
   // @ts-ignore
   const payload = req.payload || ({} as TokenPayload);
   try {
-    const result = await GCV.annotateImage(image);
+    await GCV.annotateImage(image);
     await Database.User.updateDriverStatus(payload.sub, true);
     await Database.DriversLicenses.create(payload.email, image);
-    res.status(200).json({ result: result.data });
+    res.status(200).send();
   } catch (err) {
     res.status(500).json(err.response || err);
   }
