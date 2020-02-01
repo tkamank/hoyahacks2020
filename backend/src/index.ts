@@ -4,6 +4,7 @@ import { config } from "dotenv";
 import express from "express";
 import { Application, Request, Response } from "express";
 import { validateRequest } from "./middleware";
+import { TokenPayload } from "google-auth-library";
 
 config();
 
@@ -21,7 +22,8 @@ app.get("/", (_, res: Response) => {
 
 app.get("/verify", validateRequest, (req: Request, res: Response) => {
   // @ts-ignore
-  res.status(200).json(req.payload || {});
+  const payload = req.payload || {} as TokenPayload;
+  res.status(200).json(payload);
 });
 
 app.listen(PORT, () => {
