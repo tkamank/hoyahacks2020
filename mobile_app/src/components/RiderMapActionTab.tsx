@@ -17,14 +17,16 @@ export default class RiderMapActionTab extends Component<Props> {
     const { locations, onLocationPressed } = this.props;
 
     return (
-      <View style={{ flex: locations.length > 0 ? 1.6 : 0.4 }}>
+      <View style={{ flex: locations.length > 0 ? 1.6 : 0.0}}>
         <View
           style={{
-            flex: 0.5,
-            backgroundColor: '#F3F3F3',
+            backgroundColor: '#e4e3e4',
+            shadowColor: '#b4b4b4',
+            shadowRadius: 6,
+            shadowOpacity: 75,
             alignItems: 'center',
             paddingTop: "5%",
-            paddingBottom: "8%"
+            paddingBottom: "5%"
           }}>
           <Text
             style={{
@@ -40,7 +42,7 @@ export default class RiderMapActionTab extends Component<Props> {
             <Text
               style={{
                 shadowColor: '#000000',
-                color: '#ccc',
+                color: '#b4b4b4',
                 fontSize: 13,
                 fontWeight: "600"
               }}
@@ -50,33 +52,30 @@ export default class RiderMapActionTab extends Component<Props> {
           }
         </View>
         <View style={{
-          flex: locations.length > 0 ? 1.5 : 0,
+          flex: locations.length > 0 ? 2.5 : 0,
           justifyContent: "center"
         }}>
           <FlatList
             data={locations.sort((a, b) => (a.distance || 0) - (b.distance || 0))}
             renderItem={({ item }: { item: LocationWithDistance }) =>
               <TouchableOpacity
-                style={{ alignItems: 'center' }}
+                style={{ alignItems: 'center', backgroundColor: '#f5f5f5' }}
                 onPress={() => {
                   if (onLocationPressed) {
                     onLocationPressed(item);
                   }
                 }}
               >
-                <Text
+                <Text 
                   style={{
-                    color: '#000000',
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: 6,
+                    color: '#a1a0a0',
                     overflow: 'hidden',
-                    fontWeight: "700",
+                    fontWeight: "400",
                     padding: 10,
-                    borderColor: '#000000',
-                    borderStyle: 'solid',
-                    fontSize: 24,
-                    margin: '1%',
-                    borderWidth: 2
+                    fontSize: 22,
+                    paddingLeft: 60,
+                    paddingRight: 60,
+                    textAlign: "center"
                   }}
                 >
                   {item.location.formatted_address} ({(item.distance || 0).toFixed(2)} Mi.)
