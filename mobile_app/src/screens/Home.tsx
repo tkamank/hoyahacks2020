@@ -674,7 +674,7 @@ export default class SplashScreen extends Component<Props, State> {
             if (!user) {
                 throw new Error("No user!");
             }
-            const response = await fetch(`${GCP_ENDPOINT}/ride/pickup`, {
+            const response = await fetch(`${GCP_ENDPOINT}/driver`, {
                 headers: new Headers({
                     Authorization: `Bearer ${user.idToken}`
                 })
@@ -682,7 +682,7 @@ export default class SplashScreen extends Component<Props, State> {
             const ride = await response.json() as Ride;
             if (ride) {
                 const cancelResponse = await fetch(
-                    `${GCP_ENDPOINT}/ride/cancel`,
+                    `${GCP_ENDPOINT}/ride/pickup`,
                     {
                         method: "POST",
                         headers: new Headers({
@@ -690,7 +690,7 @@ export default class SplashScreen extends Component<Props, State> {
                             "Content-Type": "application/json"
                         }),
                         body: JSON.stringify({
-                            id: ride.id
+                            ride: ride.id
                         })
                     });
                 console.log(cancelResponse.status);
