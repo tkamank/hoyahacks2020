@@ -37,6 +37,7 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
     // await Database.DriversLicenses.create(payload.email, image);
     res.status(200).send();
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
