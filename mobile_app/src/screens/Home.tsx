@@ -193,7 +193,7 @@ export default class SplashScreen extends Component<Props, State> {
                             break;
                     }
                 }
-                if (getRideStatusListener === null) {
+                if (getRideStatusListener === undefined) {
                     getRideStatusListener = setInterval(this._checkForExistingRide, 2500);
                 }
             } else {
