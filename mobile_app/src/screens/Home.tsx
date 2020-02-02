@@ -574,7 +574,7 @@ export default class SplashScreen extends Component<Props, State> {
                                 this._getMyLocations();
                                 Alert.alert(
                                     "Location deleted",
-                                    undefined,
+                                    `${location.location.formatted_address} has been deleted.`,
                                     [{ text: "Okay" }]
                                 );
                             } else {
