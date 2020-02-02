@@ -147,7 +147,7 @@ export default class SplashScreen extends Component<Props, State> {
                 })
             });
             const awaiting_pickup = await response.json();
-            this.setState({ rideStatus: awaiting_pickup ? "awaiting_pickup" : "idle" });
+            this.setState({ rideStatus: !!awaiting_pickup ? "awaiting_pickup" : "idle" });
         } catch (err) {
             console.warn(err);
         }
