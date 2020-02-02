@@ -5,6 +5,7 @@ import {
   FlatList
 } from 'react-native';
 import { LocationWithDistance } from '../lib/types';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface Props {
   locations: LocationWithDistance[],
@@ -13,7 +14,7 @@ interface Props {
 
 export default class RiderMapActionTab extends Component<Props> {
   render() {
-    const { locations } = this.props;
+    const { locations, onLocationPressed } = this.props;
 
     return (
       <View style={{ flex: 1.6 }}>
@@ -26,7 +27,33 @@ export default class RiderMapActionTab extends Component<Props> {
           <FlatList
             data={locations.sort((a, b) => (a.distance || 0) - (b.distance || 0))}
             renderItem={({ item }: { item: LocationWithDistance }) =>
-              <View style={{ alignItems: 'center' }}><Text style={{ color: '#000000', backgroundColor: '#f5f5f5', borderRadius: 6, overflow: 'hidden', fontWeight: "700", padding: 10, borderColor: '#000000', borderStyle: 'solid', fontSize: 24, margin: '1%', borderWidth: 2 }}>{item.location.formatted_address} ({(item.distance || 0).toFixed(2)} Mi.)</Text></View>}
+              <TouchableOpacity
+                style={{ alignItems: 'center' }}
+                onPress={() => {
+                  if (onLocationPressed) {
+                    onLocationPressed(item);
+                  }
+                }}
+              >
+                <Text
+                  style={{
+                    color: '#000000',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: 6,
+                    overflow: 'hidden',
+                    fontWeight: "700",
+                    padding: 10,
+                    borderColor: '#000000',
+                    borderStyle: 'solid',
+                    fontSize: 24,
+                    margin: '1%',
+                    borderWidth: 2
+                  }}
+                >
+                  {item.location.formatted_address} ({(item.distance || 0).toFixed(2)} Mi.)
+                </Text>
+              </TouchableOpacity>
+            }
             keyExtractor={(_: LocationWithDistance, i: number) => i.toString()}
           >
           </FlatList>
