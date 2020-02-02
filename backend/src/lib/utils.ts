@@ -95,6 +95,25 @@ export const Database = {
       });
     }
   },
+  Ride: {
+    create: async(rider: string, location: number): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `INSERT INTO ride_requests (rider_id, location_id) VALUES ("${rider}", "${location}");`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          }
+        );
+      });
+    }
+  },
   User: {
     create: async (id: string, email: string): Promise<void> => {
       return new Promise((resolve, reject) => {
@@ -186,7 +205,7 @@ export const Database = {
         }
       );
       connection.query(
-        'CREATE TABLE ride_requests (id INT(6) AUTO_INCREMENT PRIMARY KEY, rider_id VARCHAR(30) NOT NULL, location_id INT(6) NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);',
+        'CREATE TABLE ride_requests (id INT(6) AUTO_INCREMENT PRIMARY KEY, rider_id VARCHAR(30) NOT NULL, location_id INT(6) NOT NULL, status INT(1) NOT NULL DEFAULT 0, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);',
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);

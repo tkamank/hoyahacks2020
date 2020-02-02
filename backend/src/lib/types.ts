@@ -12,6 +12,10 @@ export interface Location {
   formatted_address: string;
 }
 
+export interface RequestRideRequestBody {
+  location?: string;
+}
+
 export interface RegisterAsNewDriverRequestBody {
   image?: string;
 }
