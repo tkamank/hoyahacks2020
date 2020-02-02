@@ -32,7 +32,8 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
   const payload = req.payload || ({} as TokenPayload);
   try {
     // TODO: Resolve this on the server
-    await GCV.annotateImage(image);
+    const token = req.headers.authorization.split(" ")[1];
+    await GCV.annotateImage(token, image);
     await Database.User.updateDriverStatus(payload.sub, true);
     // await Database.DriversLicenses.create(payload.email, image);
     res.status(200).send();
