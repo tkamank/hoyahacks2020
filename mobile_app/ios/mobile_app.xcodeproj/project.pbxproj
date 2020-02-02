@@ -322,12 +322,13 @@
 				DEVELOPMENT_TEAM = T4GLZ43QVM;
 				INFOPLIST_FILE = mobile_app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.kirinpatel.hoyahacks2020;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kirinpatel.hoyahacks2020.rapidd;
 				PRODUCT_NAME = mobile_app;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -342,12 +343,13 @@
 				DEVELOPMENT_TEAM = T4GLZ43QVM;
 				INFOPLIST_FILE = mobile_app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.kirinpatel.hoyahacks2020;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kirinpatel.hoyahacks2020.rapidd;
 				PRODUCT_NAME = mobile_app;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
