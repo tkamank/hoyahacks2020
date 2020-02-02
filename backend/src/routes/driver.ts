@@ -6,6 +6,22 @@ import { Database } from "../lib/utils";
 
 const router = Router();
 
+router.get(
+  "/",
+  validateRequest,
+  async (req: Request, res: Response) => {
+    // @ts-ignore
+    const payload = req.payload || ({} as TokenPayload);
+    try {
+      const ride = await Database.Ride.activeDrive(payload.sub);
+      res.status(200).json(ride);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  }
+);
+
 router.post("/join", validateRequest, async (req: Request, res: Response) => {
   const { image = "" } = req.body as RegisterAsNewDriverRequestBody;
   if (image.length === 0) {

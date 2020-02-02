@@ -174,6 +174,26 @@ export const Database = {
         );
       });
     },
+    activeDrive: async (id: string): Promise<Ride | null> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `SELECT * FROM ride_requests WHERE driver_id="${id}";`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else if (result.length > 0) {
+              const rides = result as Ride[];
+              resolve(rides[0]);
+            } else {
+              resolve(null);
+            }
+          }
+        );
+      });
+    },
     start: async (id: number, driverId: string): Promise<boolean> => {
       return new Promise((resolve, reject) => {
         const connection = _createConnection();
