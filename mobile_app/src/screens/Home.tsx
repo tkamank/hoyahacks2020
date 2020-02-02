@@ -16,6 +16,7 @@ import { distanceBetweenCoordinates } from "../lib/utils";
 import DriverMapActionTab from "../components/DriverMapActionTab";
 import RiderMapActionTab from "../components/RiderMapActionTab";
 import AwaitingPickupBar from '../components/AwaitingPickupBar';
+import EnRouteBar from '../components/EnRouteBar';
 
 interface Props extends NavigationSwitchScreenProps { };
 
@@ -793,6 +794,9 @@ export default class SplashScreen extends Component<Props, State> {
                         onCancelRidePressed={riderStatus === "rider" ? this._cancelRide : undefined}
                         onPickupRiderPressed={riderStatus === "driver" ? this._pickupRider : undefined}
                         onCancelDriverPressed={riderStatus === "driver" ? this._cancelDrive : undefined} />
+                }
+                {(rideStatus === "riding" || rideStatus === "driving") &&
+                    <EnRouteBar onCompletion={() => {}} />
                 }
             </>
         );
