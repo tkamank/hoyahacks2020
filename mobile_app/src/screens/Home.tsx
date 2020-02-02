@@ -11,7 +11,8 @@ import Geolocation from 'react-native-geolocation-service';
 import { GoogleSignin } from "@react-native-community/google-signin";
 // @ts-ignore
 import { GCP_ENDPOINT } from 'react-native-dotenv';
-import { Location, User } from '../lib/types';
+import { Location, User, LocationWithDistance } from '../lib/types';
+import { distanceBetweenCoordinates } from "../lib/utils";
 import DriverMapActionTab from "../components/DriverMapActionTab";
 import RiderMapActionTab from "../components/RiderMapActionTab";
 
@@ -21,9 +22,11 @@ interface State {
     region?: Region;
     currentPosition?: Geolocation.GeoPosition;
     riderStatus: "rider" | "driver";
-    recentLocations: Location[];
+    recentLocations: LocationWithDistance[];
 
 }
+
+let watchId: number;
 
 export default class SplashScreen extends Component<Props, State> {
     static navigationOptions = () => {
@@ -67,7 +70,41 @@ export default class SplashScreen extends Component<Props, State> {
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
+        watchId = Geolocation.watchPosition(
+            (position) => {
+                this.setState({
+                    currentPosition: position
+                });
+                this._calculateDistanceToMyLocations();
+            },
+            (error) => {
+                // See error code charts below.
+                console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 })
     }
+
+    componentWillUnmount() {
+        Geolocation.clearWatch(watchId);
+    }
+
+    _calculateDistanceToMyLocations = () => {
+        const { currentPosition, recentLocations } = this.state;
+        if (!currentPosition) {
+            return;
+        }
+        recentLocations.forEach((location: LocationWithDistance) => {
+            const locationCoords = {
+                latitude: parseFloat(location.location.latitude),
+                longitude: parseFloat(location.location.longitude)
+            };
+            location.distance = distanceBetweenCoordinates(
+                currentPosition.coords,
+                locationCoords
+            );
+        });
+        this.setState({ recentLocations });
+    };
 
     _getMyLocations = async () => {
         try {
@@ -82,8 +119,12 @@ export default class SplashScreen extends Component<Props, State> {
                 })
             });
             if (response.ok) {
-                const recentLocations: Location[] = await response.json();
+                const myLocations: Location[] = await response.json();
+                const recentLocations: LocationWithDistance[] = myLocations.map((location: Location) => {
+                    return { location };
+                });
                 this.setState({ recentLocations });
+                this._calculateDistanceToMyLocations();
             }
         } catch (err) {
             console.warn(err);
@@ -214,7 +255,7 @@ export default class SplashScreen extends Component<Props, State> {
                 })
             });
             if (response.ok) {
-                const newLocation: Location = await response.json();
+                const newLocation: LocationWithDistance = { location: await response.json() };
                 this.setState({ recentLocations: [newLocation].concat(recentLocations) });
             }
         } catch (err) {

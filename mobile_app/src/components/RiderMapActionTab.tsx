@@ -4,11 +4,11 @@ import {
   Text,
   FlatList
 } from 'react-native';
-import { Location } from '../lib/types';
+import { LocationWithDistance } from '../lib/types';
 
 interface Props {
-  locations: Location[],
-  onLocationPressed?: (location: Location) => void;
+  locations: LocationWithDistance[],
+  onLocationPressed?: (location: LocationWithDistance) => void;
 };
 
 export default class RiderMapActionTab extends Component<Props> {
@@ -24,10 +24,10 @@ export default class RiderMapActionTab extends Component<Props> {
         </View>
         <View style={{ flex: 1.5, justifyContent: "center" }}>
           <FlatList
-            data={locations}
-            renderItem={({ item }: { item: Location }) =>
-              <View style={{ alignItems: 'center' }}><Text style={{ color: '#000000', backgroundColor: '#f5f5f5', borderRadius: 6, overflow: 'hidden', fontWeight: "700", padding: 10, borderColor: '#000000', borderStyle: 'solid', fontSize: 24, margin: '1%', borderWidth: 2 }}>{item.formatted_address}</Text></View>}
-            keyExtractor={(_: Location, i: number) => i.toString()}
+            data={locations.sort((a, b) => (a.distance || 0) - (b.distance || 0))}
+            renderItem={({ item }: { item: LocationWithDistance }) =>
+              <View style={{ alignItems: 'center' }}><Text style={{ color: '#000000', backgroundColor: '#f5f5f5', borderRadius: 6, overflow: 'hidden', fontWeight: "700", padding: 10, borderColor: '#000000', borderStyle: 'solid', fontSize: 24, margin: '1%', borderWidth: 2 }}>{item.location.formatted_address} ({(item.distance || 0).toFixed(2)} Mi.)</Text></View>}
+            keyExtractor={(_: LocationWithDistance, i: number) => i.toString()}
           >
           </FlatList>
         </View>
