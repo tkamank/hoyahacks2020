@@ -4,8 +4,15 @@ import {
   Text
 } from 'react-native';
 
-export default class AwiatingPickupBar extends Component {
+export interface Props {
+  status?: "awaiting_driver" | "awaiting_pickup";
+  onCancelRidePressed?: () => void;
+}
+
+export default class AwaitingPickupBar extends Component<Props> {
   render() {
+    const { status = "awaiting_driver", onCancelRidePressed } = this.props;
+
     return (
       <View
         style={{
@@ -22,7 +29,9 @@ export default class AwiatingPickupBar extends Component {
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text>Awaiting driver...</Text>
+          <Text>
+            Awaiting {status === "awaiting_driver" ? "driver" : "pickup"}...
+          </Text>
         </View>
       </View>
     );
