@@ -11,7 +11,7 @@ import Geolocation from 'react-native-geolocation-service';
 import { GoogleSignin } from "@react-native-community/google-signin";
 // @ts-ignore
 import { GCP_ENDPOINT } from 'react-native-dotenv';
-import { Location, User, LocationWithDistance, DetailedRide, DetailedRideWithDistance } from '../lib/types';
+import { Location, User, LocationWithDistance, DetailedRide, DetailedRideWithDistance, Ride } from '../lib/types';
 import { distanceBetweenCoordinates } from "../lib/utils";
 import DriverMapActionTab from "../components/DriverMapActionTab";
 import RiderMapActionTab from "../components/RiderMapActionTab";
@@ -378,6 +378,46 @@ export default class SplashScreen extends Component<Props, State> {
         }
     };
 
+    _cancelRide = async () => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/ride`, {
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`
+                })
+            });
+            const ride = await response.json() as Ride;
+            if (ride) {
+                const cancelResponse = await fetch(
+                    `${GCP_ENDPOINT}/ride/cancel`,
+                    {
+                        method: "POST",
+                        headers: new Headers({
+                            Authorization: `Bearer ${user.idToken}`,
+                            "Content-Type": "application/json"
+                        }),
+                        body: JSON.stringify({
+                            id: ride.id
+                        })
+                    });
+                if (cancelResponse.ok) {
+                    this.setState({ rideStatus: "idle" });
+                } else {
+                    Alert.alert(
+                        "Unable to cancel request",
+                        "An unexpected error occurred!",
+                        [{ text: "Okay" }]
+                    );
+                }
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+
     render() {
         const { region, riderStatus, recentLocations, rideStatus, localRides } = this.state;
 
@@ -435,7 +475,10 @@ export default class SplashScreen extends Component<Props, State> {
                         </View>
                     </View>
                 }
-                {rideStatus === "awaiting_pickup" && <AwaitingPickupBar />}
+                {rideStatus === "awaiting_pickup" &&
+                    <AwaitingPickupBar
+                        onCancelRidePressed={this._cancelRide} />
+                }
             </>
         );
     }

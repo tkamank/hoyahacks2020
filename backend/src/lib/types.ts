@@ -34,6 +34,10 @@ export interface RequestRideRequestBody {
   location?: string;
 }
 
+export interface CancelRideRequestRequestBody {
+  id?: string;
+}
+
 export interface RegisterAsNewDriverRequestBody {
   image?: string;
 }

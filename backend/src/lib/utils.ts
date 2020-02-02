@@ -1,6 +1,6 @@
 import axios from "axios";
 import mysql from "mysql";
-import { User, Location, DetailedRide } from "./types";
+import { User, Location, DetailedRide, Ride } from "./types";
 
 const _createConnection = (): mysql.Connection => {
   return mysql.createConnection({
@@ -118,6 +118,24 @@ export const Database = {
         );
       });
     },
+    cancel: async (id: number, rider: string): Promise<boolean> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `DELETE FROM ride_requests WHERE id=${id} AND rider_id="${rider}";`,
+          (err: mysql.MysqlError, result: any[]) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              // @ts-ignore
+              resolve(result.affectedRows === 1);
+            }
+          }
+        );
+      });
+    },
     get: async (id: string): Promise<DetailedRide[]> => {
       return new Promise((resolve, reject) => {
         const connection = _createConnection();
@@ -136,7 +154,7 @@ export const Database = {
         );
       });
     },
-    exitsForRider: async (id: string): Promise<boolean> => {
+    activeRide: async (id: string): Promise<Ride | null> => {
       return new Promise((resolve, reject) => {
         const connection = _createConnection();
         connection.connect();
@@ -146,9 +164,11 @@ export const Database = {
             connection.end();
             if (err) {
               reject(err);
+            } else if (result.length > 0) {
+              const rides = result as Ride[];
+              resolve(rides[0]);
             } else {
-              const rides = result as any[];
-              resolve(rides.length > 0);
+              resolve(null);
             }
           }
         );
