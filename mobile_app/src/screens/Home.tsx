@@ -42,21 +42,7 @@ export default class SplashScreen extends Component<Props, State> {
                 longitudeDelta: 0.0121,
             },
             riderStatus: "rider",
-            recentLocations: [{
-                latitude: 38.922406,
-                longitude: -77.042154,
-                title: "Songbyrd Bar DC"
-            },
-            {
-                latitude: 38.888420,
-                longitude: -77.022904,
-                title: "Ashleigh's Kickback"
-            },
-            {
-                latitude: 38.907582,
-                longitude: -77.072351,
-                title: "Georgetown University"
-            }]
+            recentLocations: []
         };
     }
 
@@ -73,6 +59,7 @@ export default class SplashScreen extends Component<Props, State> {
                     },
                     currentPosition: position
                 });
+                this._getMyLocations();
             },
             (error) => {
                 // See error code charts below.
@@ -81,6 +68,35 @@ export default class SplashScreen extends Component<Props, State> {
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
     }
+
+    _getMyLocations = async () => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/location/mine`, {
+                method: "GET",
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`
+                })
+            });
+            if (response.ok) {
+                const recentLocations: Location[] = await response.json();
+                this.setState({ recentLocations });
+            }
+        } catch (err) {
+            console.warn(err);
+            Alert.alert(
+                "Unable to load recent locations!",
+                "An unexpected error occurred!",
+                [
+                    {
+                        text: "Okay"
+                    }
+                ]);
+        }
+    };
 
     _createUser = async () => {
         try {
@@ -198,12 +214,8 @@ export default class SplashScreen extends Component<Props, State> {
                 })
             });
             if (response.ok) {
-                const json = await response.json() as any;
-                const validResult = json["results"].find((element: any) => element["formatted_address"]);
-                if (validResult) {
-                    const newLocation: Location = { latitude: coordinate.latitude, longitude: coordinate.longitude, title: validResult["formatted_address"] };
-                    this.setState({ recentLocations: [newLocation].concat(recentLocations) });
-                }
+                const newLocation: Location = await response.json();
+                this.setState({ recentLocations: [newLocation].concat(recentLocations) });
             }
         } catch (err) {
             console.warn(err);

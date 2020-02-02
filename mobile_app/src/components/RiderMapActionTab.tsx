@@ -26,7 +26,7 @@ export default class RiderMapActionTab extends Component<Props> {
           <FlatList
             data={locations}
             renderItem={({ item }: { item: Location }) =>
-              <View style={{ alignItems: 'center' }}><Text style={{ color: '#000000', backgroundColor: '#f5f5f5', borderRadius: 6, overflow: 'hidden', fontWeight: "700", padding: 10, borderColor: '#000000', borderStyle: 'solid', fontSize: 24, margin: '1%', borderWidth: 2 }}>{item.title}</Text></View>}
+              <View style={{ alignItems: 'center' }}><Text style={{ color: '#000000', backgroundColor: '#f5f5f5', borderRadius: 6, overflow: 'hidden', fontWeight: "700", padding: 10, borderColor: '#000000', borderStyle: 'solid', fontSize: 24, margin: '1%', borderWidth: 2 }}>{item.formatted_address}</Text></View>}
             keyExtractor={(_: Location, i: number) => i.toString()}
           >
           </FlatList>
