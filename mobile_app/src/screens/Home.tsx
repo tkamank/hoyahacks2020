@@ -81,11 +81,30 @@ export default class SplashScreen extends Component<Props, State> {
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
             );
             watchId = Geolocation.watchPosition(
-                (position) => {
+                async (position) => {
                     this.setState({
                         currentPosition: position
                     });
                     this._calculateDistanceToMyLocations();
+                    try {
+                        const user = await GoogleSignin.getCurrentUser();
+                        if (!user) {
+                            throw new Error("No user!");
+                        }
+                        await fetch(`${GCP_ENDPOINT}/user/update-location`, {
+                            method: "POST",
+                            headers: new Headers({
+                                Authorization: `Bearer ${user.idToken}`,
+                                "Content-Type": "application/json"
+                            }),
+                            body: JSON.stringify({
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude
+                            })
+                        });
+                    } catch {
+                        // Ignore error
+                    }
                 },
                 (error) => {
                     // See error code charts below.

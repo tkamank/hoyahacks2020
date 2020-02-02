@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { TokenPayload } from "google-auth-library";
 import { validateRequest } from "../middleware";
 import { Database } from "../lib/utils";
+import { UpdateUserLocationRequestBody } from "../lib/types";
 
 const router = Router();
 
@@ -27,5 +28,27 @@ router.post("/create", validateRequest, async (req: Request, res: Response) => {
   }
 });
 
+router.post(
+  "/update-location",
+  validateRequest,
+  async (req: Request, res: Response) => {
+    const {
+      latitude = "",
+      longitude = "",
+    } = req.body as UpdateUserLocationRequestBody;
+    if (latitude.length === 0 || longitude.length === 0) {
+      res.status(400).send();
+      return;
+    }
+    // @ts-ignore
+    const payload = req.payload as TokenPayload;
+    try {
+      await Database.User.updateLocation(payload.sub, latitude, longitude);
+      res.status(200).send();
+    } catch (err) {
+      res.status(500).send();
+    }
+  }
+);
 
 export default router;

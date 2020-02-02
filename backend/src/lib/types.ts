@@ -42,6 +42,11 @@ export interface RegisterAsNewDriverRequestBody {
   image?: string;
 }
 
+export interface UpdateUserLocationRequestBody {
+  latitude?: string;
+  longitude?: string;
+}
+
 export interface GetLocationNameFromCoordinatesQuery {
   latitude?: string;
   longitude?: string;

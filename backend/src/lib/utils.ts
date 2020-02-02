@@ -236,6 +236,34 @@ export const Database = {
         );
       });
     },
+    updateLocation: async (id: string, latitude: string, longitude: string) => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `UPDATE user_locations SET latitude="${latitude}", longitude="${longitude}" WHERE user_id="${id}";`,
+          (err: mysql.MysqlError, result: any) => {
+            if (err) {
+              reject(err);
+            } else if (result && result.length > 0) {
+              connection.end();
+              resolve();
+            } else {
+              connection.query(
+                `INSERT INTO user_locations (user_id, latitude, longitude) VALUES ("${id}", "${latitude}", "${longitude}");`,
+                (err: mysql.MysqlError, _: any) => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    resolve();
+                  }
+                }
+              );
+            }
+          }
+        );
+      });
+    },
   },
   seed: async () => {
     const connection = _createConnection();
@@ -266,7 +294,15 @@ export const Database = {
         }
       );
       connection.query(
-        "CREATE TABLE ride_requests (id INT(6) AUTO_INCREMENT PRIMARY KEY, rider_id VARCHAR(30) NOT NULL, location_id INT(6) NOT NULL, status INT(1) NOT NULL DEFAULT 0, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);",
+        `CREATE TABLE ride_requests (id INT(6) AUTO_INCREMENT PRIMARY KEY, rider_id VARCHAR(30) NOT NULL, location_id INT(6) NOT NULL, status INT(1) NOT NULL DEFAULT 0, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);`,
+        (err: mysql.MysqlError, result: any) => {
+          if (err) {
+            console.warn(err);
+          }
+        }
+      );
+      connection.query(
+        `CREATE TABLE user_locations (id INT(6) AUTO_INCREMENT PRIMARY KEY, user_id VARCHAR(30) NOT NULL, latitude VARCHAR(20) NOT NULL, longitude VARCHAR(20) NOT NULL);`,
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);
