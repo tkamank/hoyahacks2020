@@ -21,3 +21,18 @@ export interface LocationWithDistance {
   distance?: number;
   location: Location;
 }
+
+export interface DetailedRide {
+  id: string;
+  rider_id: string;
+  location_id: string;
+  latitude: string;
+  longitude: string;
+  formatted_address: string;
+  created_at: Date;
+}
+
+export interface DetailedRideWithDistance {
+  distance?: number;
+  ride: DetailedRide;
+}

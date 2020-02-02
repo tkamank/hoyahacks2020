@@ -11,7 +11,7 @@ import Geolocation from 'react-native-geolocation-service';
 import { GoogleSignin } from "@react-native-community/google-signin";
 // @ts-ignore
 import { GCP_ENDPOINT } from 'react-native-dotenv';
-import { Location, User, LocationWithDistance } from '../lib/types';
+import { Location, User, LocationWithDistance, DetailedRide, DetailedRideWithDistance } from '../lib/types';
 import { distanceBetweenCoordinates } from "../lib/utils";
 import DriverMapActionTab from "../components/DriverMapActionTab";
 import RiderMapActionTab from "../components/RiderMapActionTab";
@@ -23,6 +23,7 @@ interface State {
     currentPosition?: Geolocation.GeoPosition;
     riderStatus: "rider" | "driver";
     recentLocations: LocationWithDistance[];
+    localRides: DetailedRideWithDistance[];
     rideStatus: "idle" | "awaiting_pickup" | "riding" | "driving";
 }
 
@@ -46,6 +47,7 @@ export default class SplashScreen extends Component<Props, State> {
             },
             riderStatus: "rider",
             recentLocations: [],
+            localRides: [],
             rideStatus: "idle"
         };
     }
@@ -111,6 +113,24 @@ export default class SplashScreen extends Component<Props, State> {
             );
         });
         this.setState({ recentLocations });
+    };
+
+    _calculateDistanceToRides = () => {
+        const { currentPosition, localRides: localRiders } = this.state;
+        if (!currentPosition) {
+            return;
+        }
+        localRiders.forEach((ride: DetailedRideWithDistance) => {
+            const locationCoords = {
+                latitude: parseFloat(ride.ride.latitude),
+                longitude: parseFloat(ride.ride.longitude)
+            };
+            ride.distance = distanceBetweenCoordinates(
+                currentPosition.coords,
+                locationCoords
+            );
+        });
+        this.setState({ localRides: localRiders });
     };
 
     _getMyLocations = async () => {
@@ -195,9 +215,13 @@ export default class SplashScreen extends Component<Props, State> {
                     Authorization: `Bearer ${user.idToken}`
                 })
             });
-            console.log(response.status);
             if (response.ok) {
-                console.log(await response.json());
+                const rides = await response.json() as DetailedRide[];
+                const localRides: DetailedRideWithDistance[] = rides.map((ride: DetailedRide) => {
+                    return { ride };
+                });
+                this.setState({ localRides });
+                this._calculateDistanceToRides();
             }
         } catch (err) {
             console.warn(err);
@@ -326,7 +350,7 @@ export default class SplashScreen extends Component<Props, State> {
     };
 
     render() {
-        const { region, riderStatus, recentLocations } = this.state;
+        const { region, riderStatus, recentLocations, localRides } = this.state;
 
         return (
             <>
@@ -347,7 +371,7 @@ export default class SplashScreen extends Component<Props, State> {
                     ? <RiderMapActionTab
                         locations={recentLocations}
                         onLocationPressed={this._handleLocationPressForRider} />
-                    : <DriverMapActionTab />
+                    : <DriverMapActionTab rides={localRides} />
                 }
                 <View style={{ flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center', borderColor: '#D95F76', borderStyle: 'solid', borderTopWidth: 2 }}>
                     <View style={{ flex: 1 }}>
