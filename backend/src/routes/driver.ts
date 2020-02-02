@@ -33,7 +33,7 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
   try {
     // TODO: Resolve this on the server
     await GCV.annotateImage(image);
-    await Database.User.updateDriverStatus(payload.sub, true);
+    // await Database.User.updateDriverStatus(payload.sub, true);
     // await Database.DriversLicenses.create(payload.email, image);
     res.status(200).send();
   } catch (err) {
