@@ -61,7 +61,8 @@ export default class RegisterAsNewDriver extends Component<Props> {
             }),
             body
           });
-          if (response.ok) {
+          console.log("Upload drivers license:", response.status);
+          if (response.status === 200) {
             const { navigation } = this.props;
             navigation.goBack();
           } else {
