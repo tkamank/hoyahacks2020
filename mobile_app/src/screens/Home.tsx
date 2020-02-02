@@ -622,6 +622,50 @@ export default class SplashScreen extends Component<Props, State> {
         }
     };
 
+    _cancelDrive = async () => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/driver`, {
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`
+                })
+            });
+            const ride = await response.json() as Ride;
+            if (ride) {
+                const cancelResponse = await fetch(
+                    `${GCP_ENDPOINT}/ride/cancel`,
+                    {
+                        method: "POST",
+                        headers: new Headers({
+                            Authorization: `Bearer ${user.idToken}`,
+                            "Content-Type": "application/json"
+                        }),
+                        body: JSON.stringify({
+                            id: ride.id
+                        })
+                    });
+                console.log(cancelResponse.status);
+                if (cancelResponse.ok) {
+                    if (getDriveStatusListener) {
+                        clearInterval(getDriveStatusListener);
+                    }
+                    this.setState({ rideStatus: "idle" });
+                } else {
+                    Alert.alert(
+                        "Unable to cancel request",
+                        "An unexpected error occurred!",
+                        [{ text: "Okay" }]
+                    );
+                }
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+
     render() {
         const { region, riderStatus, recentLocations, rideStatus, localRides } = this.state;
 

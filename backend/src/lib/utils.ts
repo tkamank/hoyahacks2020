@@ -118,12 +118,12 @@ export const Database = {
         );
       });
     },
-    cancel: async (id: number, rider: string): Promise<boolean> => {
+    cancel: async (id: number, user: string): Promise<boolean> => {
       return new Promise((resolve, reject) => {
         const connection = _createConnection();
         connection.connect();
         connection.query(
-          `DELETE FROM ride_requests WHERE id=${id} AND rider_id="${rider}";`,
+          `DELETE FROM ride_requests WHERE id=${id} AND rider_id="${user}" OR driver_id="${user}";`,
           (err: mysql.MysqlError, result: any[]) => {
             connection.end();
             if (err) {
