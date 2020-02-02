@@ -217,7 +217,7 @@ export const Database = {
         const connection = _createConnection();
         connection.connect();
         connection.query(
-          `UPDATE ride_requests SET driver_id="${driverId}", status=2 WHERE id="${id}" AND status=1;`,
+          `UPDATE ride_requests status=2 WHERE id="${id}" AND driver_id="${driverId}" AND status=1;`,
           (err: mysql.MysqlError, result: any) => {
             connection.end();
             if (err) {

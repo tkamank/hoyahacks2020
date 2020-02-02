@@ -223,12 +223,12 @@ export default class SplashScreen extends Component<Props, State> {
                 } else {
                     if (getRideStatusListener) {
                         clearInterval(getRideStatusListener);
+                        Alert.alert(
+                            "Pickup canceled by driver",
+                            "The driver has canceled the ride!",
+                            [{ text: "Okay" }]
+                        );
                     }
-                    Alert.alert(
-                        "Pickup canceled by driver",
-                        "The driver has canceled the ride!",
-                        [{ text: "Okay" }]
-                    );
                     this.setState({ rideStatus: "idle" });
                 }
             } else {
@@ -668,6 +668,47 @@ export default class SplashScreen extends Component<Props, State> {
         }
     };
 
+    _pickupRider = async () => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/ride/pickup`, {
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`
+                })
+            });
+            const ride = await response.json() as Ride;
+            if (ride) {
+                const cancelResponse = await fetch(
+                    `${GCP_ENDPOINT}/ride/cancel`,
+                    {
+                        method: "POST",
+                        headers: new Headers({
+                            Authorization: `Bearer ${user.idToken}`,
+                            "Content-Type": "application/json"
+                        }),
+                        body: JSON.stringify({
+                            id: ride.id
+                        })
+                    });
+                console.log(cancelResponse.status);
+                if (cancelResponse.ok) {
+                    this.setState({ rideStatus: "driving" });
+                } else {
+                    Alert.alert(
+                        "Unable to pickup rider",
+                        "An unexpected error occurred!",
+                        [{ text: "Okay" }]
+                    );
+                }
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+
     render() {
         const { region, riderStatus, recentLocations, rideStatus, localRides } = this.state;
 
@@ -749,7 +790,7 @@ export default class SplashScreen extends Component<Props, State> {
                     <AwaitingPickupBar
                         status={rideStatus}
                         onCancelRidePressed={riderStatus === "rider" ? this._cancelRide : undefined}
-                        onPickupRiderPressed={riderStatus === "driver" ? ( ) => {} : undefined}
+                        onPickupRiderPressed={riderStatus === "driver" ? this._pickupRider : undefined}
                         onCancelDriverPressed={riderStatus === "driver" ? this._cancelDrive : undefined} />
                 }
             </>
