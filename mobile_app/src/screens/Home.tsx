@@ -788,6 +788,20 @@ export default class SplashScreen extends Component<Props, State> {
                     onLongPress={this._handleMapLongPressed}
                     onRegionChangeComplete={region => this.setState({ region })}
                 >
+                    {riderStatus === "rider" && recentLocations.map((location, i) =>
+                        <Marker
+                            key={i}
+                            coordinate={{
+                                latitude: parseFloat(location.location.latitude),
+                                longitude: parseFloat(location.location.longitude)
+                            }}
+                            pinColor="#0000FF"
+                            onPress={() => Alert.alert(
+                                location.location.formatted_address,
+                                `This location is ${(location.distance || 0).toFixed(2)} miles away.`
+                            )}
+                        />
+                    )}
                     {riderStatus === "driver" && viableLocalRides.map((rider, i) =>
                         <Marker
                             key={i}
