@@ -499,40 +499,101 @@ export default class SplashScreen extends Component<Props, State> {
         }
     };
 
-    _handleLocationPressForRider = async (location: LocationWithDistance) => {
-        try {
-            const user = await GoogleSignin.getCurrentUser();
-            if (!user) {
-                throw new Error("No user!");
-            }
-            if (!location.location.id) {
-                this._getMyLocations();
-                return;
-            }
-            const response = await fetch(`${GCP_ENDPOINT}/ride/request`, {
-                method: "POST",
-                headers: new Headers({
-                    Authorization: `Bearer ${user.idToken}`,
-                    "Content-Type": "application/json"
-                }),
-                body: JSON.stringify({
-                    location: location.location.id
-                })
-            });
-            if (response.status === 403) {
-                Alert.alert(
-                    "Unable to request multiple rides at once",
-                    "You are unable to request more than one ride at a single time.",
-                    [{ text: "Okay" }]
-                );
-                this.setState({ rideStatus: "awaiting_pickup" });
-            } else if (response.ok) {
-                this.setState({ rideStatus: "awaiting_pickup" });
-            }
-            this._checkForExistingRide();
-        } catch (err) {
-            console.warn(err);
-        }
+    _handleLocationPressForRider = (location: LocationWithDistance) => {
+        Alert.alert(
+            "Request a ride?",
+            `Would you like to request a ride to ${location.location.formatted_address}?`,
+            [
+                {
+                    text: "Okay", onPress: async () => {
+                        try {
+                            const user = await GoogleSignin.getCurrentUser();
+                            if (!user) {
+                                throw new Error("No user!");
+                            }
+                            if (!location.location.id) {
+                                this._getMyLocations();
+                                return;
+                            }
+                            const response = await fetch(`${GCP_ENDPOINT}/ride/request`, {
+                                method: "POST",
+                                headers: new Headers({
+                                    Authorization: `Bearer ${user.idToken}`,
+                                    "Content-Type": "application/json"
+                                }),
+                                body: JSON.stringify({
+                                    location: location.location.id
+                                })
+                            });
+                            if (response.status === 403) {
+                                Alert.alert(
+                                    "Unable to request multiple rides at once",
+                                    "You are unable to request more than one ride at a single time.",
+                                    [{ text: "Okay" }]
+                                );
+                                this.setState({ rideStatus: "awaiting_pickup" });
+                            } else if (response.ok) {
+                                this.setState({ rideStatus: "awaiting_pickup" });
+                            }
+                            this._checkForExistingRide();
+                        } catch (err) {
+                            console.warn(err);
+                        }
+                    }
+                },
+                { text: "Cancel", style: "cancel" }
+            ]
+        );
+    };
+
+    _handleLocationLongPressForRider = (location: LocationWithDistance) => {
+        Alert.alert(
+            "Delete location",
+            `Would you like to delete ${location.location.formatted_address}?`,
+            [
+                {
+                    text: "Delete", style: "destructive", onPress: async () => {
+                        try {
+                            const user = await GoogleSignin.getCurrentUser();
+                            if (!user) {
+                                throw new Error("No user!");
+                            }
+                            const response = await fetch(`${GCP_ENDPOINT}/location/delete`, {
+                                method: "POST",
+                                headers: new Headers({
+                                    Authorization: `Bearer ${user.idToken}`,
+                                    "Content-Type": "application/json"
+                                }),
+                                body: JSON.stringify({
+                                    id: location.location.id
+                                })
+                            });
+                            if (response.ok) {
+                                this._getMyLocations();
+                                Alert.alert(
+                                    "Location deleted",
+                                    undefined,
+                                    [{ text: "Okay" }]
+                                );
+                            } else {
+                                throw new Error(response.status.toString());
+                            }
+                        } catch (err) {
+                            console.warn(err);
+                            Alert.alert(
+                                "Unable to delete location",
+                                "An unexpected error occurred.",
+                                [
+                                    {
+                                        text: "Okay"
+                                    }
+                                ]);
+                        }
+                    }
+                },
+                { text: "Cancel", style: "cancel" }
+            ]
+        );
     };
 
     _handleRidePressForDriver = async (ride: DetailedRideWithDistance) => {
@@ -739,7 +800,8 @@ export default class SplashScreen extends Component<Props, State> {
                     ? rideStatus === "idle"
                         ? <RiderMapActionTab
                             locations={recentLocations}
-                            onLocationPressed={this._handleLocationPressForRider} />
+                            onLocationPressed={this._handleLocationPressForRider}
+                            onLocationLongPressed={this._handleLocationLongPressForRider} />
                         : null
                     : rideStatus === "idle"
                         ? <DriverMapActionTab
