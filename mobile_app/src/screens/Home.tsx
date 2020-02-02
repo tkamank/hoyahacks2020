@@ -55,6 +55,7 @@ export default class SplashScreen extends Component<Props, State> {
     }
 
     async componentDidMount() {
+        console.log(`${GCP_ENDPOINT}`);
         try {
             await GoogleSignin.signInSilently();
         } catch {
@@ -182,6 +183,9 @@ export default class SplashScreen extends Component<Props, State> {
                     switch (ride.status) {
                         case 0:
                             this.setState({ rideStatus: "awaiting_driver" });
+                            if (getRideStatusListener === undefined) {
+                                getRideStatusListener = setInterval(this._checkForExistingRide, 2500);
+                            }
                             break;
                         case 1:
                             this.setState({ rideStatus: "awaiting_pickup" });
@@ -190,11 +194,11 @@ export default class SplashScreen extends Component<Props, State> {
                             this.setState({ rideStatus: "riding" });
                             break;
                         default:
+                            if (getRideStatusListener) {
+                                clearInterval(getRideStatusListener);
+                            }
                             break;
                     }
-                }
-                if (getRideStatusListener === undefined) {
-                    getRideStatusListener = setInterval(this._checkForExistingRide, 2500);
                 }
             } else {
                 Alert.alert(
@@ -498,7 +502,11 @@ export default class SplashScreen extends Component<Props, State> {
                             id: ride.id
                         })
                     });
+                console.log(cancelResponse.status);
                 if (cancelResponse.ok) {
+                    if (getRideStatusListener) {
+                        clearInterval(getRideStatusListener);
+                    }
                     this.setState({ rideStatus: "idle" });
                 } else {
                     Alert.alert(
