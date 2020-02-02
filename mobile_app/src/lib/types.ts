@@ -25,6 +25,7 @@ export interface LocationWithDistance {
 export interface DetailedRide {
   id: string;
   rider_id: string;
+  status: number;
   location_id: string;
   latitude: string;
   longitude: string;

@@ -123,7 +123,7 @@ export const Database = {
         const connection = _createConnection();
         connection.connect();
         connection.query(
-          `SELECT ride_requests.id, ride_requests.rider_id, ride_requests.location_id, locations.latitude, locations.longitude, locations.formatted_address, ride_requests.created_at FROM ride_requests INNER JOIN locations WHERE ride_requests.rider_id!="${id}" AND ride_requests.location_id=locations.id;`,
+          `SELECT ride_requests.id, ride_requests.rider_id, ride_requests.status, ride_requests.location_id, locations.latitude, locations.longitude, locations.formatted_address, ride_requests.created_at FROM ride_requests INNER JOIN locations WHERE ride_requests.rider_id!="${id}" AND ride_requests.status=0 AND ride_requests.location_id=locations.id;`,
           (err: mysql.MysqlError, result: any) => {
             connection.end();
             if (err) {
@@ -141,7 +141,7 @@ export const Database = {
         const connection = _createConnection();
         connection.connect();
         connection.query(
-          `SELECT id FROM ride_requests WHERE rider_id="${id}";`,
+          `SELECT * FROM ride_requests WHERE rider_id="${id}";`,
           (err: mysql.MysqlError, result: any) => {
             connection.end();
             if (err) {
