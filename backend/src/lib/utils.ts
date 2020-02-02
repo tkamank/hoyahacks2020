@@ -1,6 +1,6 @@
 import axios from "axios";
 import mysql from "mysql";
-import { User } from "./types";
+import { User,Location } from "./types";
 
 const _createConnection = (): mysql.Connection => {
   return mysql.createConnection({
@@ -57,6 +57,43 @@ export const Database = {
         );
       });
     },
+  },
+  Location: {
+    create: async (owner: string, latitude: string, longitude: string, formattedAddress: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `INSERT INTO locations (owner,latitude,longitude,formatted_address) VALUES ("${owner}", "${latitude}","${longitude}","${formattedAddress}");`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          }
+        );
+      });
+    },
+    get: async (owner: string): Promise<Location[]> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `SELECT * FROM locations WHERE owner="${owner}";`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              const locations = result as Location[];
+              resolve(locations);
+            }
+          }
+        );
+      });
+    }
   },
   User: {
     create: async (id: string, email: string): Promise<void> => {
@@ -134,6 +171,14 @@ export const Database = {
       );
       connection.query(
         `CREATE TABLE drivers_licenses (id INT(6) AUTO_INCREMENT PRIMARY KEY, email VARCHAR(150) UNIQUE NOT NULL, data MEDIUMTEXT NOT NULL);`,
+        (err: mysql.MysqlError, result: any) => {
+          if (err) {
+            console.warn(err);
+          }
+        }
+      );
+      connection.query(
+        `CREATE TABLE locations (id INT(6) AUTO_INCREMENT PRIMARY KEY, owner VARCHAR(30) NOT NULL, latitude VARCHAR(20) NOT NULL, longitude VARCHAR(20) NOT NULL, formatted_address VARCHAR(255) NOT NULL);`,
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);

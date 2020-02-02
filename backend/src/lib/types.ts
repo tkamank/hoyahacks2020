@@ -4,6 +4,14 @@ export interface User {
   verifiedDriver: boolean;
 }
 
+export interface Location {
+  id: string;
+  owner: string;
+  latitude: string;
+  longitude: string;
+  formatted_address: string;
+}
+
 export interface RegisterAsNewDriverRequestBody {
   image?: string;
 }
