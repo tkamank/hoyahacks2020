@@ -30,11 +30,11 @@ export default class AwaitingPickupBar extends Component<Props> {
           <Text
             style={{
               color: '#f3f3f3',
-              fontSize: 30,
+              fontSize: 26,
               fontWeight: '600',
               textAlign: 'center',
             }}>
-            Awaiting {status === 'awaiting_driver' ? 'driver' : 'pickup'}...
+             {status === 'awaiting_driver' ? 'Looking for driver' : 'Awaiting pickup'}...
           </Text>
           <View
             style={{
