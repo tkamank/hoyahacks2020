@@ -29,13 +29,24 @@ router.get("/", validateRequest, async (req: Request, res: Response) => {
             res.status(200).json({
                 latitude,
                 longitude,
-                formattedAddress: validResult["formatted_address"]
+                formatted_address: validResult["formatted_address"]
             });
         } else {
             res.status(404).send();
         }
     } catch (err) {
         console.log(err);
+        res.status(500).send();
+    }
+});
+
+router.get("/mine",validateRequest,async (req: Request, res: Response) => {
+    // @ts-ignore
+    const payload = req.payload || ({} as TokenPayload);
+    try {
+        const locations = await Database.Location.get(payload.sub);
+        res.status(200).json(locations);
+    } catch {
         res.status(500).send();
     }
 });

@@ -1,6 +1,6 @@
 import axios from "axios";
 import mysql from "mysql";
-import { User } from "./types";
+import { User,Location } from "./types";
 
 const _createConnection = (): mysql.Connection => {
   return mysql.createConnection({
@@ -76,6 +76,24 @@ export const Database = {
         );
       });
     },
+    get: async (owner: string): Promise<Location[]> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `SELECT * FROM locations WHERE owner="${owner}";`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              const locations = result as Location[];
+              resolve(locations);
+            }
+          }
+        );
+      });
+    }
   },
   User: {
     create: async (id: string, email: string): Promise<void> => {
