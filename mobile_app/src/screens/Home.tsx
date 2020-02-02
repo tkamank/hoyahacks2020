@@ -29,6 +29,7 @@ interface State {
 }
 
 let watchId: number;
+let getLocalRidersListener: number;
 let getRideStatusListener: number;
 
 export default class SplashScreen extends Component<Props, State> {
@@ -323,6 +324,9 @@ export default class SplashScreen extends Component<Props, State> {
 
     _verifyUserExists = async () => {
         this.setState({ riderStatus: "rider" });
+        if (getLocalRidersListener) {
+            clearInterval(getLocalRidersListener);
+        }
         try {
             const user = await GoogleSignin.getCurrentUser();
             if (!user) {
@@ -368,6 +372,9 @@ export default class SplashScreen extends Component<Props, State> {
                 const json = await response.json() as User;
                 if (json.verifiedDriver) {
                     this._getLocalRiders();
+                    if (getLocalRidersListener === undefined) {
+                        getLocalRidersListener = setInterval(this._getLocalRiders, 2500);
+                    }
                 } else {
                     navigation.navigate("RegisterAsNewDriver");
                 }
@@ -471,6 +478,9 @@ export default class SplashScreen extends Component<Props, State> {
                 );
             } else if (response.ok) {
                 this.setState({ rideStatus: "driving" });
+                if (getLocalRidersListener === undefined) {
+                    getLocalRidersListener = setInterval(this._getLocalRiders, 2500);
+                }
             }
         } catch (err) {
             console.warn(err);
