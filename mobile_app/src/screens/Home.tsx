@@ -199,13 +199,13 @@ export default class SplashScreen extends Component<Props, State> {
             if (response.ok) {
                 const ride = await response.json() as Ride;
                 if (ride) {
+                    if (getRideStatusListener === undefined) {
+                        getRideStatusListener = setInterval(this._checkForExistingRide, 2500);
+                    }
                     console.log(ride.status);
                     switch (ride.status) {
                         case 0:
                             this.setState({ rideStatus: "awaiting_driver" });
-                            if (getRideStatusListener === undefined) {
-                                getRideStatusListener = setInterval(this._checkForExistingRide, 2500);
-                            }
                             break;
                         case 1:
                             this.setState({ rideStatus: "awaiting_pickup" });
@@ -253,13 +253,13 @@ export default class SplashScreen extends Component<Props, State> {
                 const ride = await response.json() as Ride;
                 console.log(ride);
                 if (ride !== null) {
+                    if (getRideStatusListener === undefined) {
+                        getDriveStatusListener = setInterval(this._checkForExistingDrive, 2500);
+                    }
                     console.log("STATUS:", ride.status);
                     switch (ride.status) {
                         case 1:
                             this.setState({ rideStatus: "awaiting_pickup" });
-                            if (getRideStatusListener === undefined) {
-                                getDriveStatusListener = setInterval(this._checkForExistingDrive, 2500);
-                            }
                             break;
                         case 2:
                             this.setState({ rideStatus: "driving" });
