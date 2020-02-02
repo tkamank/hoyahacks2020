@@ -12,9 +12,9 @@ const _createConnection = (): mysql.Connection => {
 };
 
 export const GCV = {
-  annotateImage: async (token: string, image: string) => {
+  annotateImage: async (image: string) => {
     return await axios({
-      url: `https://vision.googleapis.com/v1/images:annotate`,
+      url: `https://vision.googleapis.com/v1/images:annotate?key=${process.env.API_KEY}`,
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
