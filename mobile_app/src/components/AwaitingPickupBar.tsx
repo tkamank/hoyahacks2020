@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import React, {Component} from 'react';
+import {View, Text, BackHandler, ColorPropType} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export interface Props {
   status?: 'awaiting_driver' | 'awaiting_pickup';
@@ -10,7 +10,11 @@ export interface Props {
 
 export default class AwaitingPickupBar extends Component<Props> {
   render() {
-    const { status = 'awaiting_driver', onCancelRidePressed } = this.props;
+    const {
+      status = 'awaiting_driver',
+      onCancelRidePressed,
+      onPickupRiderPressed,
+    } = this.props;
 
     return (
       <View
@@ -27,16 +31,32 @@ export default class AwaitingPickupBar extends Component<Props> {
           borderStyle: 'solid',
           borderTopWidth: 2,
         }}>
-        <View style={{ flex: 5.5, flexDirection: 'row' }}>
-          <Text
-            style={{
-              color: '#f3f3f3',
-              fontSize: 26,
-              fontWeight: '600',
-              textAlign: 'center',
-            }}>
-            {status === 'awaiting_driver' ? 'Looking for driver' : 'Awaiting pickup'}...
-          </Text>
+        <View style={{flex: 5.5, flexDirection: 'row'}}>
+          {onPickupRiderPressed ? (
+            <Text
+              style={{
+                color: '#f3f3f3',
+                fontSize: 26,
+                fontWeight: '600',
+                textAlign: 'center',
+                paddingTop: '5%'
+              }}>
+              Rider waiting...
+            </Text>
+          ) : (
+            <Text
+              style={{
+                color: '#f3f3f3',
+                fontSize: 26,
+                fontWeight: '600',
+                textAlign: 'center',
+              }}>
+              {status === 'awaiting_driver'
+                ? 'Looking for driver'
+                : 'Waiting for pickup'}
+              ...
+            </Text>
+          )}
           <View
             style={{
               flexGrow: 1,
@@ -44,7 +64,31 @@ export default class AwaitingPickupBar extends Component<Props> {
               alignItems: 'flex-end',
               alignContent: 'flex-end',
             }}>
-            {onCancelRidePressed &&
+            {onPickupRiderPressed && (
+              <TouchableOpacity
+                onPress={() => {
+                  if (onPickupRiderPressed) {
+                    onPickupRiderPressed();
+                  }
+                }}>
+                <Text
+                  style={{
+                    textAlign: 'right',
+                    color: '#D95F76',
+                    fontSize: 24,
+                    marginLeft: 40,
+                    fontWeight: '700',
+                    padding: '5%',
+                    backgroundColor: '#f3f3f3',
+                    borderRadius: 15,
+                    overflow: 'hidden'
+                    
+                  }}>
+                  Arrived
+                </Text>
+              </TouchableOpacity>
+            )}
+            {onCancelRidePressed && (
               <TouchableOpacity
                 onPress={() => {
                   if (onCancelRidePressed) {
@@ -60,9 +104,9 @@ export default class AwaitingPickupBar extends Component<Props> {
                     paddingRight: '0%',
                   }}>
                   X
-              </Text>
+                </Text>
               </TouchableOpacity>
-            }
+            )}
           </View>
         </View>
       </View>
