@@ -47,7 +47,7 @@ export default class RiderMapActionTab extends Component<Props> {
                 fontWeight: "600"
               }}
             >
-              Long press on the map to get started
+              Tap and hold wherever you'd like to go
             </Text>
           }
         </View>

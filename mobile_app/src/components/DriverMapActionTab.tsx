@@ -39,7 +39,7 @@ export default class RiderMapActionTab extends Component<Props> {
               fontWeight: "600"
             }}
           >
-            {localRides.length > 0 ? "Its a great day to drive!" : "There are no riders!"}
+            {localRides.length > 0 ? "Its a great day to drive!" : "The coast is clear.."}
           </Text>
           {localRides.length > 0 &&
             <Text
