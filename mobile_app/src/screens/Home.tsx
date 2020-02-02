@@ -198,7 +198,7 @@ export default class SplashScreen extends Component<Props, State> {
             console.log(response.status);
             if (response.ok) {
                 const ride = await response.json() as Ride;
-                if (ride) {
+                if (ride !== null) {
                     if (getRideStatusListener === undefined) {
                         getRideStatusListener = setInterval(this._checkForExistingRide, 2500);
                     }
@@ -219,6 +219,16 @@ export default class SplashScreen extends Component<Props, State> {
                             }
                             break;
                     }
+                } else {
+                    if (getRideStatusListener) {
+                        clearInterval(getRideStatusListener);
+                    }
+                    Alert.alert(
+                        "Pickup cancelled by driver",
+                        "The driver has cancelled the ride!",
+                        [{ text: "Okay" }]
+                    );
+                    this.setState({ rideStatus: "idle" });
                 }
             } else {
                 Alert.alert(
@@ -274,6 +284,11 @@ export default class SplashScreen extends Component<Props, State> {
                     if (getDriveStatusListener) {
                         clearInterval(getDriveStatusListener);
                     }
+                    Alert.alert(
+                        "Pickup cancelled by rider",
+                        "The rider has cancelled their request for a ride!",
+                        [{ text: "Okay" }]
+                    );
                     this.setState({ rideStatus: "idle" });
                 }
             } else {
