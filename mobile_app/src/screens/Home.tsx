@@ -15,6 +15,7 @@ import { Location, User, LocationWithDistance, DetailedRide, DetailedRideWithDis
 import { distanceBetweenCoordinates } from "../lib/utils";
 import DriverMapActionTab from "../components/DriverMapActionTab";
 import RiderMapActionTab from "../components/RiderMapActionTab";
+import AwaitingPickupBar from '../components/AwaitingPickupBar';
 
 interface Props extends NavigationSwitchScreenProps { };
 
@@ -70,6 +71,7 @@ export default class SplashScreen extends Component<Props, State> {
                         },
                         currentPosition: position
                     });
+                    this._checkForExistingRide();
                     this._getMyLocations();
                 },
                 (error) => {
@@ -131,6 +133,24 @@ export default class SplashScreen extends Component<Props, State> {
             );
         });
         this.setState({ localRides: localRiders });
+    };
+
+    _checkForExistingRide = async () => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/ride`, {
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`,
+                })
+            });
+            const awaiting_pickup = await response.json();
+            this.setState({ rideStatus: awaiting_pickup ? "awaiting_pickup" : "idle" });
+        } catch (err) {
+            console.warn(err);
+        }
     };
 
     _getMyLocations = async () => {
@@ -343,14 +363,23 @@ export default class SplashScreen extends Component<Props, State> {
                     location: location.location.id
                 })
             });
-            console.log(response);
+            if (response.status === 403) {
+                Alert.alert(
+                    "Unable to request multiple rides at once",
+                    "You are unable to request more than one ride at a single time.",
+                    [{ text: "Okay" }]
+                );
+                this.setState({ rideStatus: "awaiting_pickup" });
+            } else if (response.ok) {
+                this.setState({ rideStatus: "awaiting_pickup" });
+            }
         } catch (err) {
             console.warn(err);
         }
     };
 
     render() {
-        const { region, riderStatus, recentLocations, localRides } = this.state;
+        const { region, riderStatus, recentLocations, rideStatus, localRides } = this.state;
 
         return (
             <>
@@ -368,27 +397,45 @@ export default class SplashScreen extends Component<Props, State> {
                     onRegionChangeComplete={region => this.setState({ region })}
                 />
                 {riderStatus === "rider"
-                    ? <RiderMapActionTab
-                        locations={recentLocations}
-                        onLocationPressed={this._handleLocationPressForRider} />
+                    ? rideStatus === "idle"
+                        ? <RiderMapActionTab
+                            locations={recentLocations}
+                            onLocationPressed={this._handleLocationPressForRider} />
+                        : null
                     : <DriverMapActionTab rides={localRides} />
                 }
-                <View style={{ flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center', borderColor: '#D95F76', borderStyle: 'solid', borderTopWidth: 2 }}>
-                    <View style={{ flex: 1 }}>
-                        <Button
-                            title="Ride"
-                            onPress={this._verifyUserExists}
-                            color={riderStatus === "rider" ? "#f3f3f3" : "#333"}
-                        />
+                {rideStatus === "idle" &&
+                    <View
+                        style={{
+                            flex: 0.5,
+                            flexDirection: 'row',
+                            backgroundColor: '#BF3668',
+                            paddingLeft: '10%',
+                            paddingRight: '10%',
+                            paddingBottom: '2%',
+                            alignItems: 'center',
+                            borderColor: '#D95F76',
+                            borderStyle: 'solid',
+                            borderTopWidth: 2
+                        }}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <Button
+                                title="Ride"
+                                onPress={this._verifyUserExists}
+                                color={riderStatus === "rider" ? "#f3f3f3" : "#333"}
+                            />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Button
+                                title="Drive"
+                                onPress={this._verifyIsDriver}
+                                color={riderStatus === "driver" ? "#f3f3f3" : "#333"}
+                            />
+                        </View>
                     </View>
-                    <View style={{ flex: 1 }}>
-                        <Button
-                            title="Drive"
-                            onPress={this._verifyIsDriver}
-                            color={riderStatus === "driver" ? "#f3f3f3" : "#333"}
-                        />
-                    </View>
-                </View>
+                }
+                {rideStatus === "awaiting_pickup" && <AwaitingPickupBar />}
             </>
         );
     }

@@ -136,6 +136,24 @@ export const Database = {
         );
       });
     },
+    exitsForRider: async (id: string): Promise<boolean> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `SELECT id FROM ride_requests WHERE rider_id="${id}";`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              const rides = result as any[];
+              resolve(rides.length > 0);
+            }
+          }
+        );
+      });
+    },
   },
   User: {
     create: async (id: string, email: string): Promise<void> => {
