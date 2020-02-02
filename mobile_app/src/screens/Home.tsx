@@ -535,6 +535,7 @@ export default class SplashScreen extends Component<Props, State> {
             } else if (response.ok) {
                 this.setState({ rideStatus: "awaiting_pickup" });
             }
+            this._checkForExistingRide();
         } catch (err) {
             console.warn(err);
         }
@@ -550,7 +551,6 @@ export default class SplashScreen extends Component<Props, State> {
                 this._getLocalRiders();
                 return;
             }
-            this._checkForExistingDrive();
             const response = await fetch(`${GCP_ENDPOINT}/ride/start`, {
                 method: "POST",
                 headers: new Headers({
@@ -573,6 +573,7 @@ export default class SplashScreen extends Component<Props, State> {
                     getLocalRidersListener = setInterval(this._getLocalRiders, 2500);
                 }
             }
+            this._checkForExistingDrive();
         } catch (err) {
             console.warn(err);
         }
@@ -747,7 +748,7 @@ export default class SplashScreen extends Component<Props, State> {
                     <AwaitingPickupBar
                         status={rideStatus}
                         onCancelRidePressed={riderStatus === "rider" ? this._cancelRide : undefined}
-                        onPickupRiderPressed={riderStatus === "driver" ? () => { } : undefined} />
+                        onPickupRiderPressed={riderStatus === "driver" ? this._cancelDrive : undefined} />
                 }
             </>
         );
