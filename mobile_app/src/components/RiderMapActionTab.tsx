@@ -17,13 +17,42 @@ export default class RiderMapActionTab extends Component<Props> {
     const { locations, onLocationPressed } = this.props;
 
     return (
-      <View style={{ flex: 1.6 }}>
-        <View style={{ flex: 0.5, backgroundColor: '#F3F3F3', alignItems: 'center' }}>
-          <Text style={{ paddingTop: "5%", paddingBottom: "8%", shadowColor: '#000000', color: '#D95F76', fontSize: 26, fontWeight: "600" }}>
+      <View style={{ flex: locations.length > 0 ? 1.6 : 0.4 }}>
+        <View
+          style={{
+            flex: 0.5,
+            backgroundColor: '#F3F3F3',
+            alignItems: 'center',
+            paddingTop: "5%",
+            paddingBottom: "8%"
+          }}>
+          <Text
+            style={{
+              shadowColor: '#000000',
+              color: '#D95F76',
+              fontSize: 26,
+              fontWeight: "600"
+            }}
+          >
             Plans for today?
-              </Text>
+          </Text>
+          {locations.length === 0 &&
+            <Text
+              style={{
+                shadowColor: '#000000',
+                color: '#ccc',
+                fontSize: 13,
+                fontWeight: "600"
+              }}
+            >
+              Long press on the map to get started
+            </Text>
+          }
         </View>
-        <View style={{ flex: 1.5, justifyContent: "center" }}>
+        <View style={{
+          flex: locations.length > 0 ? 1.5 : 0,
+          justifyContent: "center"
+        }}>
           <FlatList
             data={locations.sort((a, b) => (a.distance || 0) - (b.distance || 0))}
             renderItem={({ item }: { item: LocationWithDistance }) =>

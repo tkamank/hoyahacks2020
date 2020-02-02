@@ -23,7 +23,7 @@ interface State {
     currentPosition?: Geolocation.GeoPosition;
     riderStatus: "rider" | "driver";
     recentLocations: LocationWithDistance[];
-
+    rideStatus: "idle" | "awaiting_pickup" | "riding" | "driving";
 }
 
 let watchId: number;
@@ -45,7 +45,8 @@ export default class SplashScreen extends Component<Props, State> {
                 longitudeDelta: 0.0121,
             },
             riderStatus: "rider",
-            recentLocations: []
+            recentLocations: [],
+            rideStatus: "idle"
         };
     }
 
