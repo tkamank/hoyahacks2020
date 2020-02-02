@@ -198,6 +198,7 @@ export default class SplashScreen extends Component<Props, State> {
             console.log(response.status);
             if (response.ok) {
                 const ride = await response.json() as Ride;
+                console.log(getRideStatusListener)
                 if (ride !== null) {
                     if (getRideStatusListener === undefined) {
                         getRideStatusListener = setInterval(this._checkForExistingRide, 2500);
@@ -748,7 +749,8 @@ export default class SplashScreen extends Component<Props, State> {
                     <AwaitingPickupBar
                         status={rideStatus}
                         onCancelRidePressed={riderStatus === "rider" ? this._cancelRide : undefined}
-                        onPickupRiderPressed={riderStatus === "driver" ? this._cancelDrive : undefined} />
+                        onPickupRiderPressed={riderStatus === "driver" ? ( ) => {} : undefined}
+                        onCancelDriverPressed={riderStatus === "driver" ? this._cancelDrive : undefined} />
                 }
             </>
         );
