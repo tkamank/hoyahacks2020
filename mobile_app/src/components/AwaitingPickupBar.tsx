@@ -1,15 +1,16 @@
-import React, {Component} from 'react';
-import {View, Text} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import React, { Component } from 'react';
+import { View, Text } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export interface Props {
   status?: 'awaiting_driver' | 'awaiting_pickup';
   onCancelRidePressed?: () => void;
+  onPickupRiderPressed?: () => void;
 }
 
 export default class AwaitingPickupBar extends Component<Props> {
   render() {
-    const {status = 'awaiting_driver', onCancelRidePressed} = this.props;
+    const { status = 'awaiting_driver', onCancelRidePressed } = this.props;
 
     return (
       <View
@@ -26,7 +27,7 @@ export default class AwaitingPickupBar extends Component<Props> {
           borderStyle: 'solid',
           borderTopWidth: 2,
         }}>
-        <View style={{flex: 5.5, flexDirection: 'row'}}>
+        <View style={{ flex: 5.5, flexDirection: 'row' }}>
           <Text
             style={{
               color: '#f3f3f3',
@@ -34,7 +35,7 @@ export default class AwaitingPickupBar extends Component<Props> {
               fontWeight: '600',
               textAlign: 'center',
             }}>
-             {status === 'awaiting_driver' ? 'Looking for driver' : 'Awaiting pickup'}...
+            {status === 'awaiting_driver' ? 'Looking for driver' : 'Awaiting pickup'}...
           </Text>
           <View
             style={{
@@ -43,23 +44,25 @@ export default class AwaitingPickupBar extends Component<Props> {
               alignItems: 'flex-end',
               alignContent: 'flex-end',
             }}>
-            <TouchableOpacity
-              onPress={() => {
-                if (onCancelRidePressed) {
-                  onCancelRidePressed();
-                }
-              }}>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  color: '#f3f3f3',
-                  fontSize: 30,
-                  fontWeight: '800',
-                  paddingRight: '0%',
+            {onCancelRidePressed &&
+              <TouchableOpacity
+                onPress={() => {
+                  if (onCancelRidePressed) {
+                    onCancelRidePressed();
+                  }
                 }}>
-                X
+                <Text
+                  style={{
+                    textAlign: 'right',
+                    color: '#f3f3f3',
+                    fontSize: 30,
+                    fontWeight: '800',
+                    paddingRight: '0%',
+                  }}>
+                  X
               </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            }
           </View>
         </View>
       </View>

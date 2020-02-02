@@ -31,6 +31,7 @@ interface State {
 let watchId: number;
 let getLocalRidersListener: number;
 let getRideStatusListener: number;
+let getDriveStatusListener: number;
 
 export default class SplashScreen extends Component<Props, State> {
     static navigationOptions = () => {
@@ -56,6 +57,15 @@ export default class SplashScreen extends Component<Props, State> {
     }
 
     async componentDidMount() {
+        if (getLocalRidersListener) {
+            clearInterval(getLocalRidersListener);
+        }
+        if (getRideStatusListener) {
+            clearInterval(getRideStatusListener);
+        }
+        if (getDriveStatusListener) {
+            clearInterval(getDriveStatusListener);
+        }
         console.log(`${GCP_ENDPOINT}`);
         try {
             await GoogleSignin.signInSilently();
@@ -119,6 +129,15 @@ export default class SplashScreen extends Component<Props, State> {
 
     componentWillUnmount() {
         Geolocation.clearWatch(watchId);
+        if (getLocalRidersListener) {
+            clearInterval(getLocalRidersListener);
+        }
+        if (getRideStatusListener) {
+            clearInterval(getRideStatusListener);
+        }
+        if (getDriveStatusListener) {
+            clearInterval(getDriveStatusListener);
+        }
     }
 
     _calculateDistanceToMyLocations = () => {
@@ -204,6 +223,62 @@ export default class SplashScreen extends Component<Props, State> {
             } else {
                 Alert.alert(
                     "Unable to validate ride status",
+                    "An unexpected error occurred!",
+                    [{ text: "Okay" }]
+                );
+                if (getRideStatusListener) {
+                    clearInterval(getRideStatusListener);
+                }
+                this.setState({ rideStatus: "idle" });
+            }
+        } catch (err) {
+            console.warn(err);
+            this.setState({ rideStatus: "idle" });
+        }
+    };
+
+    _checkForExistingDrive = async () => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/driver`, {
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`,
+                })
+            });
+            console.log(response.status);
+            if (response.ok) {
+                const ride = await response.json() as Ride;
+                console.log(ride);
+                if (ride !== null) {
+                    console.log("STATUS:", ride.status);
+                    switch (ride.status) {
+                        case 1:
+                            this.setState({ rideStatus: "awaiting_pickup" });
+                            if (getRideStatusListener === undefined) {
+                                getDriveStatusListener = setInterval(this._checkForExistingDrive, 2500);
+                            }
+                            break;
+                        case 2:
+                            this.setState({ rideStatus: "driving" });
+                            break;
+                        default:
+                            if (getRideStatusListener) {
+                                clearInterval(getRideStatusListener);
+                            }
+                            break;
+                    }
+                } else {
+                    if (getRideStatusListener) {
+                        clearInterval(getRideStatusListener);
+                    }
+                    this.setState({ rideStatus: "idle" });
+                }
+            } else {
+                Alert.alert(
+                    "Unable to validate drive status",
                     "An unexpected error occurred!",
                     [{ text: "Okay" }]
                 );
@@ -460,6 +535,7 @@ export default class SplashScreen extends Component<Props, State> {
                 this._getLocalRiders();
                 return;
             }
+            this._checkForExistingDrive();
             const response = await fetch(`${GCP_ENDPOINT}/ride/start`, {
                 method: "POST",
                 headers: new Headers({
@@ -611,7 +687,8 @@ export default class SplashScreen extends Component<Props, State> {
                     || rideStatus === "awaiting_pickup") &&
                     <AwaitingPickupBar
                         status={rideStatus}
-                        onCancelRidePressed={this._cancelRide} />
+                        onCancelRidePressed={riderStatus === "rider" ? this._cancelRide : undefined}
+                        onPickupRiderPressed={riderStatus === "driver" ? () => { } : undefined} />
                 }
             </>
         );
