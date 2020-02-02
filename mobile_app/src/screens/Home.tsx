@@ -480,14 +480,14 @@ export default class SplashScreen extends Component<Props, State> {
                     >
                         <View style={{ flex: 1 }}>
                             <Button
-                                title="Ride"
+                                title="RIDE"
                                 onPress={this._verifyUserExists}
                                 color={riderStatus === "rider" ? "#f3f3f3" : "#333"}
                             />
                         </View>
                         <View style={{ flex: 1 }}>
                             <Button
-                                title="Drive"
+                                title="DRIVE"
                                 onPress={this._verifyIsDriver}
                                 color={riderStatus === "driver" ? "#f3f3f3" : "#333"}
                             />
