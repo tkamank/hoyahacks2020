@@ -21,26 +21,28 @@ export default class RiderMapActionTab extends Component<Props> {
       .sort((a, b) => (a.distance || 0) - (b.distance || 0));
 
     return (
-      <View style={{ flex: 1.6 }}>
+      <View style={{ flex: localRides.length > 0 ? 1.6 : 0 }}>
         <View style={{
-            backgroundColor: '#e4e3e4',
-            shadowColor: '#b4b4b4',
-            shadowRadius: 6,
-            shadowOpacity: 75,
-            alignItems: 'center',
-            paddingTop: "5%",
-            paddingBottom: "5%"}}>
+          backgroundColor: '#e4e3e4',
+          shadowColor: '#b4b4b4',
+          shadowRadius: 6,
+          shadowOpacity: 75,
+          alignItems: 'center',
+          paddingTop: "5%",
+          paddingBottom: "5%"
+        }}>
           <Text
-            style={{ 
+            style={{
               shadowColor: '#000000',
               color: '#D95F76',
               fontSize: 26,
-              fontWeight: "600" 
+              fontWeight: "600"
             }}
           >
-            Its a great day to drive!
-              </Text>
-              <Text
+            {localRides.length > 0 ? "Its a great day to drive!" : "There are no riders!"}
+          </Text>
+          {localRides.length > 0 &&
+            <Text
               style={{
                 shadowColor: '#000000',
                 color: '#b4b4b4',
@@ -50,39 +52,42 @@ export default class RiderMapActionTab extends Component<Props> {
             >
               Here are riders close to you
             </Text>
+          }
         </View>
-        <View style={{ flex: 2.5, justifyContent: "center" }}>
-          <FlatList
-            data={localRides}
-            renderItem={({ item }: { item: DetailedRideWithDistance }) =>
-              <TouchableOpacity
-                style={{ alignItems: 'center', backgroundColor: '#f5f5f5'  }}
-                onPress={() => {
-                  if (onRidePressed) {
-                    onRidePressed(item);
-                  }
-                }}
-              >
-                <Text
-                  style={{
-                    color: '#a1a0a0',
-                    overflow: 'hidden',
-                    fontWeight: "400",
-                    padding: 10,
-                    fontSize: 22,
-                    paddingLeft: 60,
-                    paddingRight: 60,
-                    textAlign: "center"
+        {localRides.length > 0 &&
+          <View style={{ flex: 2.5, justifyContent: "center" }}>
+            <FlatList
+              data={localRides}
+              renderItem={({ item }: { item: DetailedRideWithDistance }) =>
+                <TouchableOpacity
+                  style={{ alignItems: 'center', backgroundColor: '#f5f5f5' }}
+                  onPress={() => {
+                    if (onRidePressed) {
+                      onRidePressed(item);
+                    }
                   }}
                 >
-                  {item.ride.formatted_address} ({(item.distance || 0).toFixed(2)} Mi.)
+                  <Text
+                    style={{
+                      color: '#a1a0a0',
+                      overflow: 'hidden',
+                      fontWeight: "400",
+                      padding: 10,
+                      fontSize: 22,
+                      paddingLeft: 60,
+                      paddingRight: 60,
+                      textAlign: "center"
+                    }}
+                  >
+                    {item.ride.formatted_address} ({(item.distance || 0).toFixed(2)} Mi.)
                 </Text>
-              </TouchableOpacity>
-            }
-            keyExtractor={(_: DetailedRideWithDistance, i: number) => i.toString()}
-          >
-          </FlatList>
-        </View>
+                </TouchableOpacity>
+              }
+              keyExtractor={(_: DetailedRideWithDistance, i: number) => i.toString()}
+            >
+            </FlatList>
+          </View>
+        }
       </View >
     );
   }
