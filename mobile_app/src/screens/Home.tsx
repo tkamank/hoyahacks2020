@@ -85,6 +85,7 @@ export default class SplashScreen extends Component<Props, State> {
                         currentPosition: position
                     });
                     this._checkForExistingRide();
+                    this._checkForExistingDrive();
                     this._getMyLocations();
                 },
                 (error) => {
