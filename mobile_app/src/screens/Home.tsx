@@ -269,6 +269,32 @@ export default class SplashScreen extends Component<Props, State> {
         }
     };
 
+    _handleLocationPressForRider = async (location: LocationWithDistance) => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            if (!location.location.id) {
+                this._getMyLocations();
+                return;
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/ride/request`, {
+                method: "POST",
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`,
+                    "Content-Type": "application/json"
+                }),
+                body: JSON.stringify({
+                    location: location.location.id
+                })
+            });
+            console.log(response);
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+
     render() {
         const { region, riderStatus, recentLocations } = this.state;
 
@@ -288,7 +314,9 @@ export default class SplashScreen extends Component<Props, State> {
                     onRegionChangeComplete={region => this.setState({ region })}
                 />
                 {riderStatus === "rider"
-                    ? <RiderMapActionTab locations={recentLocations} />
+                    ? <RiderMapActionTab
+                        locations={recentLocations}
+                        onLocationPressed={this._handleLocationPressForRider} />
                     : <DriverMapActionTab />
                 }
                 <View style={{ flex: 0.5, flexDirection: 'row', backgroundColor: '#BF3668', paddingLeft: '10%', paddingRight: '10%', paddingBottom: '2%', alignItems: 'center', borderColor: '#D95F76', borderStyle: 'solid', borderTopWidth: 2 }}>
