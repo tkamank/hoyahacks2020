@@ -14,18 +14,20 @@
 	<string>1</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Use your camera.</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Your message to user when the microphone is accessed for the first time</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Your message to user when the microphone is accessed for the first time</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>NSExceptionAllowsInsecureHTTPLoads</key>
+			<true/>
 			<key>ngrok.io</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
@@ -33,8 +35,6 @@
 			</dict>
 			<key>35.199.33.45</key>
 			<dict/>
-			<key>NSExceptionAllowsInsecureHTTPLoads</key>
-			<true/>
 			<key>localhost</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
@@ -44,12 +44,16 @@
 	</dict>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -61,18 +65,14 @@
 			</array>
 		</dict>
 	</array>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Your message to user when the photo library is accessed for the first time</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Your message to user when the photo library is accessed for the first time</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>CFBundleDisplayName</key>
-	<string>mobile_app</string>
+	<string>RAPIDD</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Track your location while the app is closed.</string>
 	<key>UISupportedInterfaceOrientations</key>
