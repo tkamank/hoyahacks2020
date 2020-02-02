@@ -102,7 +102,7 @@ router.post("/pickup", validateRequest, async (req: Request, res: Response) => {
   const payload = req.payload || ({} as TokenPayload);
   const rideId: number = parseInt(ride, 10);
   try {
-    const updated = await Database.Ride.start(rideId, payload.sub);
+    const updated = await Database.Ride.pickup(rideId, payload.sub);
     if (updated) {
       res.status(200).send();
     } else {
