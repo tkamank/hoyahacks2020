@@ -558,6 +558,7 @@ export default class SplashScreen extends Component<Props, State> {
                             if (!user) {
                                 throw new Error("No user!");
                             }
+                            console.log(`${GCP_ENDPOINT}/location/delete`);
                             const response = await fetch(`${GCP_ENDPOINT}/location/delete`, {
                                 method: "POST",
                                 headers: new Headers({
@@ -568,6 +569,7 @@ export default class SplashScreen extends Component<Props, State> {
                                     id: location.location.id
                                 })
                             });
+                            console.log(response.status);
                             if (response.ok) {
                                 this._getMyLocations();
                                 Alert.alert(

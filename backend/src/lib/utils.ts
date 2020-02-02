@@ -81,6 +81,24 @@ export const Database = {
         );
       });
     },
+    delete: async (id: number, owner: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `DELETE FROM locations WHERE id=${id} AND owner="${owner}";`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              // @ts-ignore
+              resolve(result.affectedRows === 1);
+            }
+          }
+        );
+      });
+    },
     get: async (owner: string): Promise<Location[]> => {
       return new Promise((resolve, reject) => {
         const connection = _createConnection();
