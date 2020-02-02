@@ -225,11 +225,6 @@ export default class SplashScreen extends Component<Props, State> {
                 } else {
                     if (getRideStatusListener) {
                         clearInterval(getRideStatusListener);
-                        Alert.alert(
-                            "Pickup canceled by driver",
-                            "The driver has canceled the ride!",
-                            [{ text: "Okay" }]
-                        );
                     }
                     this.setState({ rideStatus: "idle" });
                 }
@@ -287,11 +282,6 @@ export default class SplashScreen extends Component<Props, State> {
                     if (getDriveStatusListener) {
                         clearInterval(getDriveStatusListener);
                     }
-                    Alert.alert(
-                        "Pickup canceled by rider",
-                        "The rider has canceled their request for a ride!",
-                        [{ text: "Okay" }]
-                    );
                     this.setState({ rideStatus: "idle" });
                 }
             } else {
@@ -796,7 +786,8 @@ export default class SplashScreen extends Component<Props, State> {
                         onCancelDriverPressed={riderStatus === "driver" ? this._cancelDrive : undefined} />
                 }
                 {(rideStatus === "riding" || rideStatus === "driving") &&
-                    <EnRouteBar onCompletion={() => {}} />
+                    <EnRouteBar
+                        onCompletion={rideStatus === "riding" ? this._cancelRide : this._cancelDrive} />
                 }
             </>
         );
