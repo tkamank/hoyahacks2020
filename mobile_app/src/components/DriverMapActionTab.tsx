@@ -39,7 +39,7 @@ export default class RiderMapActionTab extends Component<Props> {
               fontWeight: "600"
             }}
           >
-            {localRides.length > 0 ? "Its a great day to drive!" : "The coast is clear.."}
+            {localRides.length > 0 ? "Its a great day to drive!" : "The coast is clear..."}
           </Text>
           {localRides.length > 0 &&
             <Text
@@ -51,6 +51,18 @@ export default class RiderMapActionTab extends Component<Props> {
               }}
             >
               Here are riders close to you
+            </Text>
+          }
+          {localRides.length === 0 &&
+            <Text
+              style={{
+                shadowColor: '#000000',
+                color: '#b4b4b4',
+                fontSize: 13,
+                fontWeight: "600"
+              }}
+            >
+              You can check back in a little bit
             </Text>
           }
         </View>
