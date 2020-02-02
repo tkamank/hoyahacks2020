@@ -459,6 +459,7 @@ export default class SplashScreen extends Component<Props, State> {
                         getLocalRidersListener = setInterval(this._getLocalRiders, 2500);
                     }
                 } else {
+                    this.setState({ riderStatus: "rider" });
                     navigation.navigate("RegisterAsNewDriver");
                 }
             }
