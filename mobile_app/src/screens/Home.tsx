@@ -183,10 +183,38 @@ export default class SplashScreen extends Component<Props, State> {
         }
     }
 
+    _getLocalRiders = async () => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/driver/passengers`, {
+                method: "GET",
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`
+                })
+            });
+            console.log(response.status);
+            if (response.ok) {
+                console.log(await response.json());
+            }
+        } catch (err) {
+            console.warn(err);
+            Alert.alert(
+                "Unable to load recent locations!",
+                "An unexpected error occurred!",
+                [
+                    {
+                        text: "Okay"
+                    }
+                ]);
+        }
+    }
+
     _verifyUserExists = async () => {
         this.setState({ riderStatus: "rider" });
         try {
-            const { navigation } = this.props;
             const user = await GoogleSignin.getCurrentUser();
             if (!user) {
                 throw new Error("No user!");
@@ -230,7 +258,7 @@ export default class SplashScreen extends Component<Props, State> {
             } else if (response.status === 200) {
                 const json = await response.json() as User;
                 if (json.verifiedDriver) {
-                    // TODO: Implement
+                    this._getLocalRiders();
                 } else {
                     navigation.navigate("RegisterAsNewDriver");
                 }

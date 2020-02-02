@@ -25,4 +25,20 @@ router.post("/join", validateRequest, async (req: Request, res: Response) => {
   }
 });
 
+router.get(
+  "/passengers",
+  validateRequest,
+  async (req: Request, res: Response) => {
+    // @ts-ignore
+    const payload = req.payload || ({} as TokenPayload);
+    try {
+      const rideRequests = await Database.Ride.get(payload.sub);
+      res.status(200).json(rideRequests);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  }
+);
+
 export default router;

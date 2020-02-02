@@ -12,6 +12,16 @@ export interface Location {
   formatted_address: string;
 }
 
+export interface DetailedRide {
+  id: string;
+  rider_id: string;
+  location_id: string;
+  latitude: string;
+  longitude: string;
+  formatted_address: string;
+  created_at: Date;
+}
+
 export interface RequestRideRequestBody {
   location?: string;
 }

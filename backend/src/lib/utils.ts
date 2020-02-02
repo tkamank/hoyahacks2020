@@ -1,6 +1,6 @@
 import axios from "axios";
 import mysql from "mysql";
-import { User,Location } from "./types";
+import { User, Location, DetailedRide } from "./types";
 
 const _createConnection = (): mysql.Connection => {
   return mysql.createConnection({
@@ -59,7 +59,12 @@ export const Database = {
     },
   },
   Location: {
-    create: async (owner: string, latitude: string, longitude: string, formattedAddress: string): Promise<void> => {
+    create: async (
+      owner: string,
+      latitude: string,
+      longitude: string,
+      formattedAddress: string
+    ): Promise<void> => {
       return new Promise((resolve, reject) => {
         const connection = _createConnection();
         connection.connect();
@@ -93,10 +98,10 @@ export const Database = {
           }
         );
       });
-    }
+    },
   },
   Ride: {
-    create: async(rider: string, location: number): Promise<void> => {
+    create: async (rider: string, location: number): Promise<void> => {
       return new Promise((resolve, reject) => {
         const connection = _createConnection();
         connection.connect();
@@ -112,7 +117,25 @@ export const Database = {
           }
         );
       });
-    }
+    },
+    get: async (id: string): Promise<DetailedRide[]> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `SELECT ride_requests.id, ride_requests.rider_id, ride_requests.location_id, locations.latitude, locations.longitude, locations.formatted_address, ride_requests.created_at FROM ride_requests INNER JOIN locations WHERE ride_requests.rider_id!="${id}" AND ride_requests.location_id=locations.id;`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              const rides = result as DetailedRide[];
+              resolve(rides);
+            }
+          }
+        );
+      });
+    },
   },
   User: {
     create: async (id: string, email: string): Promise<void> => {
@@ -205,7 +228,7 @@ export const Database = {
         }
       );
       connection.query(
-        'CREATE TABLE ride_requests (id INT(6) AUTO_INCREMENT PRIMARY KEY, rider_id VARCHAR(30) NOT NULL, location_id INT(6) NOT NULL, status INT(1) NOT NULL DEFAULT 0, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);',
+        "CREATE TABLE ride_requests (id INT(6) AUTO_INCREMENT PRIMARY KEY, rider_id VARCHAR(30) NOT NULL, location_id INT(6) NOT NULL, status INT(1) NOT NULL DEFAULT 0, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);",
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);

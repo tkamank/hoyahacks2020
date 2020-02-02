@@ -14,7 +14,7 @@ router.post("/request",validateRequest, async (req: Request, res: Response) => {
     }
     // @ts-ignore
     const payload = req.payload || ({} as TokenPayload);
-    const locationId: number = parseInt(location);
+    const locationId: number = parseInt(location, 10);
     try{
         await Database.Ride.create(payload.sub, locationId);
         res.status(200).send();
