@@ -5,7 +5,7 @@ import {
   Alert
 } from 'react-native';
 import { NavigationSwitchScreenProps } from "react-navigation";
-import ImagePicker, { ImagePickerResponse } from 'react-native-image-picker';
+import ImagePicker, { ImagePickerResponse, ImagePickerOptions } from 'react-native-image-picker';
 import { GoogleSignin } from "@react-native-community/google-signin";
 // @ts-ignore
 import { GCP_ENDPOINT } from 'react-native-dotenv';
@@ -24,12 +24,15 @@ export default class RegisterAsNewDriver extends Component<Props> {
   }
 
   _selectDriversLicense = () => {
-    const options = {
+    const options: ImagePickerOptions = {
       title: 'Select Drivers License',
       storageOptions: {
         skipBackup: true,
         path: 'images',
       },
+      quality: 0.4,
+      maxWidth: 400,
+      maxHeight: 400
     };
 
     ImagePicker.showImagePicker(options, async (response: ImagePickerResponse) => {
@@ -53,6 +56,7 @@ export default class RegisterAsNewDriver extends Component<Props> {
           const body = JSON.stringify({
             image
           });
+          console.log(body);
           const response = await fetch(`${GCP_ENDPOINT}/driver/join`, {
             method: "POST",
             headers: new Headers({
