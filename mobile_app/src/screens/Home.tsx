@@ -253,7 +253,7 @@ export default class SplashScreen extends Component<Props, State> {
                 const ride = await response.json() as Ride;
                 console.log(ride);
                 if (ride !== null) {
-                    if (getRideStatusListener === undefined) {
+                    if (getDriveStatusListener === undefined) {
                         getDriveStatusListener = setInterval(this._checkForExistingDrive, 2500);
                     }
                     console.log("STATUS:", ride.status);
@@ -265,14 +265,14 @@ export default class SplashScreen extends Component<Props, State> {
                             this.setState({ rideStatus: "driving" });
                             break;
                         default:
-                            if (getRideStatusListener) {
-                                clearInterval(getRideStatusListener);
+                            if (getDriveStatusListener) {
+                                clearInterval(getDriveStatusListener);
                             }
                             break;
                     }
                 } else {
-                    if (getRideStatusListener) {
-                        clearInterval(getRideStatusListener);
+                    if (getDriveStatusListener) {
+                        clearInterval(getDriveStatusListener);
                     }
                     this.setState({ rideStatus: "idle" });
                 }
@@ -282,8 +282,8 @@ export default class SplashScreen extends Component<Props, State> {
                     "An unexpected error occurred!",
                     [{ text: "Okay" }]
                 );
-                if (getRideStatusListener) {
-                    clearInterval(getRideStatusListener);
+                if (getDriveStatusListener) {
+                    clearInterval(getDriveStatusListener);
                 }
                 this.setState({ rideStatus: "idle" });
             }
