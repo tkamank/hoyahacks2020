@@ -10,11 +10,12 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 interface Props {
   locations: LocationWithDistance[],
   onLocationPressed?: (location: LocationWithDistance) => void;
+  onLocationLongPressed?: (location: LocationWithDistance) => void;
 };
 
 export default class RiderMapActionTab extends Component<Props> {
   render() {
-    const { locations, onLocationPressed } = this.props;
+    const { locations, onLocationPressed, onLocationLongPressed } = this.props;
 
     return (
       <View style={{ flex: locations.length > 0 ? 1.6 : 0.0}}>
@@ -63,6 +64,11 @@ export default class RiderMapActionTab extends Component<Props> {
                 onPress={() => {
                   if (onLocationPressed) {
                     onLocationPressed(item);
+                  }
+                }}
+                onLongPress={() => {
+                  if (onLocationLongPressed) {
+                    onLocationLongPressed(item);
                   }
                 }}
               >
