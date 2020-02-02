@@ -92,4 +92,26 @@ router.post("/start", validateRequest, async (req: Request, res: Response) => {
   }
 });
 
+router.post("/pickup", validateRequest, async (req: Request, res: Response) => {
+  const { ride = "" } = req.body as StartRideRequestBody;
+  if (ride.length === 0) {
+    res.status(400).send();
+    return;
+  }
+  // @ts-ignore
+  const payload = req.payload || ({} as TokenPayload);
+  const rideId: number = parseInt(ride, 10);
+  try {
+    const updated = await Database.Ride.start(rideId, payload.sub);
+    if (updated) {
+      res.status(200).send();
+    } else {
+      res.status(403).send();
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
 export default router;

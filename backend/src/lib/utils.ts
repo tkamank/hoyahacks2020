@@ -212,6 +212,24 @@ export const Database = {
         );
       });
     },
+    pickup: async (id: number, driverId: string): Promise<boolean> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `UPDATE ride_requests SET driver_id="${driverId}", status=2 WHERE id="${id}" AND status=1;`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              // @ts-ignore
+              resolve(result.affectedRows === 1);
+            }
+          }
+        );
+      });
+    },
   },
   User: {
     create: async (id: string, email: string): Promise<void> => {
