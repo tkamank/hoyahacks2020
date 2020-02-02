@@ -55,39 +55,40 @@ export default class SplashScreen extends Component<Props, State> {
             await GoogleSignin.signInSilently();
         } catch {
             // TODO: Handle error
+        } finally {
+            Geolocation.requestAuthorization();
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    this.setState({
+                        region: {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            latitudeDelta: 0.015,
+                            longitudeDelta: 0.0121,
+                        },
+                        currentPosition: position
+                    });
+                    this._getMyLocations();
+                },
+                (error) => {
+                    // See error code charts below.
+                    console.log(error.code, error.message);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+            watchId = Geolocation.watchPosition(
+                (position) => {
+                    this.setState({
+                        currentPosition: position
+                    });
+                    this._calculateDistanceToMyLocations();
+                },
+                (error) => {
+                    // See error code charts below.
+                    console.log(error.code, error.message);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 })
         }
-        Geolocation.requestAuthorization();
-        Geolocation.getCurrentPosition(
-            (position) => {
-                this.setState({
-                    region: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        latitudeDelta: 0.015,
-                        longitudeDelta: 0.0121,
-                    },
-                    currentPosition: position
-                });
-                this._getMyLocations();
-            },
-            (error) => {
-                // See error code charts below.
-                console.log(error.code, error.message);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
-        watchId = Geolocation.watchPosition(
-            (position) => {
-                this.setState({
-                    currentPosition: position
-                });
-                this._calculateDistanceToMyLocations();
-            },
-            (error) => {
-                // See error code charts below.
-                console.log(error.code, error.message);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 })
     }
 
     componentWillUnmount() {
