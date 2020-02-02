@@ -174,6 +174,24 @@ export const Database = {
         );
       });
     },
+    start: async (id: number, driverId: string): Promise<boolean> => {
+      return new Promise((resolve, reject) => {
+        const connection = _createConnection();
+        connection.connect();
+        connection.query(
+          `UPDATE ride_requests SET driver_id="${driverId}", status=1 WHERE id="${id}" AND status=0;`,
+          (err: mysql.MysqlError, result: any) => {
+            connection.end();
+            if (err) {
+              reject(err);
+            } else {
+              // @ts-ignore
+              resolve(result.affectedRows === 1);
+            }
+          }
+        );
+      });
+    },
   },
   User: {
     create: async (id: string, email: string): Promise<void> => {
@@ -296,7 +314,7 @@ export const Database = {
         }
       );
       connection.query(
-        `CREATE TABLE ride_requests (id INT(6) AUTO_INCREMENT PRIMARY KEY, rider_id VARCHAR(30) NOT NULL, location_id INT(6) NOT NULL, status INT(1) NOT NULL DEFAULT 0, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);`,
+        `CREATE TABLE ride_requests (id INT(6) AUTO_INCREMENT PRIMARY KEY, rider_id VARCHAR(30) NOT NULL, driver_id VARCHAR(30) DEFAULT NULL, location_id INT(6) NOT NULL, status INT(1) NOT NULL DEFAULT 0, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);`,
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);

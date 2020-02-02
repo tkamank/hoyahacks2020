@@ -22,6 +22,7 @@ export interface Ride {
 export interface DetailedRide {
   id: string;
   rider_id: string;
+  driver_id?: string;
   status: number;
   location_id: string;
   latitude: string;
@@ -47,6 +48,10 @@ export interface RegisterAsNewDriverRequestBody {
 export interface UpdateUserLocationRequestBody {
   latitude?: string;
   longitude?: string;
+}
+
+export interface StartRideRequestBody {
+  ride?: string;
 }
 
 export interface GetLocationNameFromCoordinatesQuery {

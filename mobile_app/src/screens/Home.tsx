@@ -25,10 +25,11 @@ interface State {
     riderStatus: "rider" | "driver";
     recentLocations: LocationWithDistance[];
     localRides: DetailedRideWithDistance[];
-    rideStatus: "idle" | "awaiting_pickup" | "riding" | "driving";
+    rideStatus: "idle" | "awaiting_driver" | "awaiting_pickup" | "riding" | "driving";
 }
 
 let watchId: number;
+let getRideStatusListener: number;
 
 export default class SplashScreen extends Component<Props, State> {
     static navigationOptions = () => {
@@ -173,15 +174,38 @@ export default class SplashScreen extends Component<Props, State> {
                     Authorization: `Bearer ${user.idToken}`,
                 })
             });
+            console.log(response.status);
             if (response.ok) {
-                const awaiting_pickup = await response.json();
-                this.setState({ rideStatus: !!awaiting_pickup ? "awaiting_pickup" : "idle" });
+                const ride = await response.json() as Ride;
+                if (ride) {
+                    console.log(ride.status);
+                    switch (ride.status) {
+                        case 0:
+                            this.setState({ rideStatus: "awaiting_driver" });
+                            break;
+                        case 1:
+                            this.setState({ rideStatus: "awaiting_pickup" });
+                            break;
+                        case 2:
+                            this.setState({ rideStatus: "riding" });
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (getRideStatusListener === null) {
+                    getRideStatusListener = setInterval(this._checkForExistingRide, 2500);
+                }
             } else {
                 Alert.alert(
                     "Unable to validate ride status",
                     "An unexpected error occurred!",
                     [{ text: "Okay" }]
                 );
+                if (getRideStatusListener) {
+                    clearInterval(getRideStatusListener);
+                }
+                this.setState({ rideStatus: "idle" });
             }
         } catch (err) {
             console.warn(err);
@@ -415,6 +439,40 @@ export default class SplashScreen extends Component<Props, State> {
         }
     };
 
+    _handleRidePressForDriver = async (ride: DetailedRideWithDistance) => {
+        try {
+            const user = await GoogleSignin.getCurrentUser();
+            if (!user) {
+                throw new Error("No user!");
+            }
+            if (!ride.ride.id) {
+                this._getLocalRiders();
+                return;
+            }
+            const response = await fetch(`${GCP_ENDPOINT}/ride/start`, {
+                method: "POST",
+                headers: new Headers({
+                    Authorization: `Bearer ${user.idToken}`,
+                    "Content-Type": "application/json"
+                }),
+                body: JSON.stringify({
+                    ride: ride.ride.id
+                })
+            });
+            if (response.status === 403) {
+                Alert.alert(
+                    "Unable to start drive",
+                    "An unexpected error ocurred.",
+                    [{ text: "Okay" }]
+                );
+            } else if (response.ok) {
+                this.setState({ rideStatus: "driving" });
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+
     _cancelRide = async () => {
         try {
             const user = await GoogleSignin.getCurrentUser();
@@ -494,7 +552,11 @@ export default class SplashScreen extends Component<Props, State> {
                             locations={recentLocations}
                             onLocationPressed={this._handleLocationPressForRider} />
                         : null
-                    : <DriverMapActionTab rides={viableLocalRides} />
+                    : rideStatus === "idle"
+                        ? <DriverMapActionTab
+                            rides={viableLocalRides}
+                            onRidePressed={this._handleRidePressForDriver} />
+                        : null
                 }
                 {rideStatus === "idle" &&
                     <View
@@ -527,8 +589,10 @@ export default class SplashScreen extends Component<Props, State> {
                         </View>
                     </View>
                 }
-                {rideStatus === "awaiting_pickup" &&
+                {(rideStatus === "awaiting_driver"
+                    || rideStatus === "awaiting_pickup") &&
                     <AwaitingPickupBar
+                        status={rideStatus}
                         onCancelRidePressed={this._cancelRide} />
                 }
             </>
