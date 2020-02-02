@@ -49,7 +49,12 @@ export default class SplashScreen extends Component<Props, State> {
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        try {
+            await GoogleSignin.signInSilently();
+        } catch {
+            // TODO: Handle error
+        }
         Geolocation.requestAuthorization();
         Geolocation.getCurrentPosition(
             (position) => {
@@ -257,6 +262,7 @@ export default class SplashScreen extends Component<Props, State> {
             if (response.ok) {
                 const newLocation: LocationWithDistance = { location: await response.json() };
                 this.setState({ recentLocations: [newLocation].concat(recentLocations) });
+                this._calculateDistanceToMyLocations();
             }
         } catch (err) {
             console.warn(err);
