@@ -28,11 +28,17 @@ export default class AwaitingPickupBar extends Component<Props> {
           borderTopWidth: 2
         }}
       >
-        <View style={{ flex: 1 }}>
-          <Text>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={{ flex: 5.5 }}>
+          <Text style={{ color: '#f3f3f3', fontSize: 30, fontWeight: '700' }}>
             Awaiting {status === "awaiting_driver" ? "driver" : "pickup"}...
           </Text>
+          </View>
+        
+        <View style={{ flex: 0.5, flexDirection: 'row', backgroundColor: '#a1a1a1'}}>
+          <Text style={{ textAlign: 'right', color: '#f3f3f3', fontSize: 30, fontWeight: '700' }}>X</Text>
         </View>
+      </View>
       </View>
     );
   }
