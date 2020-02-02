@@ -26,6 +26,8 @@ export interface DetailedRide {
   location_id: string;
   latitude: string;
   longitude: string;
+  user_latitude: string;
+  user_longitude: string;
   formatted_address: string;
   created_at: Date;
 }

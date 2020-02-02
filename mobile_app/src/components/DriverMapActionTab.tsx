@@ -14,11 +14,7 @@ interface Props {
 
 export default class RiderMapActionTab extends Component<Props> {
   render() {
-    const { rides, onRidePressed } = this.props;
-
-    const localRides = rides
-      .filter(ride => (ride.distance || 0) <= 50)
-      .sort((a, b) => (a.distance || 0) - (b.distance || 0));
+    const { rides: localRides, onRidePressed } = this.props;
 
     return (
       <View style={{ flex: localRides.length > 0 ? 1.6 : 0 }}>
@@ -91,7 +87,7 @@ export default class RiderMapActionTab extends Component<Props> {
                       textAlign: "center"
                     }}
                   >
-                    {item.ride.formatted_address} ({(item.distance || 0).toFixed(2)} Mi.)
+                    {item.ride.formatted_address} ({(item.distanceToRider || 0).toFixed(2)} Mi.)
                 </Text>
                 </TouchableOpacity>
               }

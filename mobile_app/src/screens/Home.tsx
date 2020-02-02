@@ -6,7 +6,7 @@ import {
     Alert
 } from 'react-native';
 import { NavigationSwitchScreenProps } from "react-navigation";
-import MapView, { Region, MapEvent } from 'react-native-maps';
+import MapView, { Region, MapEvent, Marker } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { GoogleSignin } from "@react-native-community/google-signin";
 // @ts-ignore
@@ -142,11 +142,19 @@ export default class SplashScreen extends Component<Props, State> {
             return;
         }
         localRiders.forEach((ride: DetailedRideWithDistance) => {
+            const riderLocationCoords = {
+                latitude: parseFloat(ride.ride.user_latitude),
+                longitude: parseFloat(ride.ride.user_longitude)
+            };
+            ride.distanceToRider = distanceBetweenCoordinates(
+                currentPosition.coords,
+                riderLocationCoords
+            );
             const locationCoords = {
                 latitude: parseFloat(ride.ride.latitude),
                 longitude: parseFloat(ride.ride.longitude)
             };
-            ride.distance = distanceBetweenCoordinates(
+            ride.distanceToDestination = distanceBetweenCoordinates(
                 currentPosition.coords,
                 locationCoords
             );
@@ -165,10 +173,19 @@ export default class SplashScreen extends Component<Props, State> {
                     Authorization: `Bearer ${user.idToken}`,
                 })
             });
-            const awaiting_pickup = await response.json();
-            this.setState({ rideStatus: !!awaiting_pickup ? "awaiting_pickup" : "idle" });
+            if (response.ok) {
+                const awaiting_pickup = await response.json();
+                this.setState({ rideStatus: !!awaiting_pickup ? "awaiting_pickup" : "idle" });
+            } else {
+                Alert.alert(
+                    "Unable to validate ride status",
+                    "An unexpected error occurred!",
+                    [{ text: "Okay" }]
+                );
+            }
         } catch (err) {
             console.warn(err);
+            this.setState({ rideStatus: "idle" });
         }
     };
 
@@ -260,6 +277,7 @@ export default class SplashScreen extends Component<Props, State> {
                     return { ride };
                 });
                 this.setState({ localRides });
+                console.log(localRides);
                 this._calculateDistanceToRides();
             }
         } catch (err) {
@@ -440,6 +458,11 @@ export default class SplashScreen extends Component<Props, State> {
     render() {
         const { region, riderStatus, recentLocations, rideStatus, localRides } = this.state;
 
+        const viableLocalRides = localRides
+            .filter(ride => (ride.distanceToRider || 0) <= 10)
+            .filter(ride => (ride.distanceToDestination || 0) <= 50)
+            .sort((a, b) => (a.distanceToRider || 0) - (b.distanceToRider || 0));
+
         return (
             <>
                 <StatusBar barStyle="dark-content" />
@@ -454,14 +477,24 @@ export default class SplashScreen extends Component<Props, State> {
                     }}
                     onLongPress={this._handleMapLongPressed}
                     onRegionChangeComplete={region => this.setState({ region })}
-                />
+                >
+                    {riderStatus === "driver" && viableLocalRides.map((rider, i) =>
+                        <Marker
+                            key={i}
+                            coordinate={{
+                                latitude: parseFloat(rider.ride.user_latitude),
+                                longitude: parseFloat(rider.ride.user_longitude)
+                            }}
+                        />
+                    )}
+                </MapView>
                 {riderStatus === "rider"
                     ? rideStatus === "idle"
                         ? <RiderMapActionTab
                             locations={recentLocations}
                             onLocationPressed={this._handleLocationPressForRider} />
                         : null
-                    : <DriverMapActionTab rides={localRides} />
+                    : <DriverMapActionTab rides={viableLocalRides} />
                 }
                 {rideStatus === "idle" &&
                     <View

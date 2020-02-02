@@ -141,7 +141,7 @@ export const Database = {
         const connection = _createConnection();
         connection.connect();
         connection.query(
-          `SELECT ride_requests.id, ride_requests.rider_id, ride_requests.status, ride_requests.location_id, locations.latitude, locations.longitude, locations.formatted_address, ride_requests.created_at FROM ride_requests INNER JOIN locations WHERE ride_requests.rider_id!="${id}" AND ride_requests.status=0 AND ride_requests.location_id=locations.id;`,
+          `SELECT ride_requests.id, ride_requests.rider_id, ride_requests.status, ride_requests.location_id, user_locations.latitude as user_latitude, user_locations.longitude as user_longitude, locations.latitude, locations.longitude, locations.formatted_address, ride_requests.created_at FROM ride_requests INNER JOIN locations ON ride_requests.location_id=locations.id INNER JOIN user_locations ON ride_requests.rider_id=user_locations.user_id WHERE ride_requests.rider_id!="${id}" AND ride_requests.status=0;`,
           (err: mysql.MysqlError, result: any) => {
             connection.end();
             if (err) {
@@ -227,7 +227,8 @@ export const Database = {
             connection.end();
             if (err) {
               reject(err);
-            } else if (result && result.length > 0) {
+              // @ts-ignore
+            } else if (result.affectedRows === 1) {
               resolve();
             } else {
               reject(new Error("User does not exist!"));
@@ -245,7 +246,8 @@ export const Database = {
           (err: mysql.MysqlError, result: any) => {
             if (err) {
               reject(err);
-            } else if (result && result.length > 0) {
+              // @ts-ignore
+            } else if (result.affectedRows === 1) {
               connection.end();
               resolve();
             } else {
@@ -302,7 +304,7 @@ export const Database = {
         }
       );
       connection.query(
-        `CREATE TABLE user_locations (id INT(6) AUTO_INCREMENT PRIMARY KEY, user_id VARCHAR(30) NOT NULL, latitude VARCHAR(20) NOT NULL, longitude VARCHAR(20) NOT NULL);`,
+        `CREATE TABLE user_locations (id INT(6) AUTO_INCREMENT PRIMARY KEY, user_id VARCHAR(30) UNIQUE NOT NULL, latitude VARCHAR(20) NOT NULL, longitude VARCHAR(20) NOT NULL);`,
         (err: mysql.MysqlError, result: any) => {
           if (err) {
             console.warn(err);
