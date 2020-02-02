@@ -224,8 +224,8 @@ export default class SplashScreen extends Component<Props, State> {
                         clearInterval(getRideStatusListener);
                     }
                     Alert.alert(
-                        "Pickup cancelled by driver",
-                        "The driver has cancelled the ride!",
+                        "Pickup canceled by driver",
+                        "The driver has canceled the ride!",
                         [{ text: "Okay" }]
                     );
                     this.setState({ rideStatus: "idle" });
@@ -285,8 +285,8 @@ export default class SplashScreen extends Component<Props, State> {
                         clearInterval(getDriveStatusListener);
                     }
                     Alert.alert(
-                        "Pickup cancelled by rider",
-                        "The rider has cancelled their request for a ride!",
+                        "Pickup canceled by rider",
+                        "The rider has canceled their request for a ride!",
                         [{ text: "Okay" }]
                     );
                     this.setState({ rideStatus: "idle" });
